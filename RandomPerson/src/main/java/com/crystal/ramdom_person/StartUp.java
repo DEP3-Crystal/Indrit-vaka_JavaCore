@@ -1,25 +1,22 @@
 package com.crystal.ramdom_person;
 
 import com.crystal.ramdom_person.dao.DataFromJson;
+import com.crystal.ramdom_person.validator.Validator;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/*
- * TODO
- *       1. Loading the people from a file, ✅
- *       2. adding new person at the beginning of the list not the end, ✅
- *       3. letting user to add, remove, override the person list
- * */
-public class Test {
-    static String[] PEOPLE;
+public class StartUp {
+    static List<String> PEOPLE;
     static boolean FIRST_RUN = true;
     public static LinkedList<String> CHOSEN = new LinkedList<>();
 
     public static void main(String[] args) {
         PEOPLE = DataFromJson.loadPeople();
         menu();
+
+//       showPeople(PEOPLE);
     }
 
     static void menu() {
@@ -32,6 +29,7 @@ public class Test {
                     1. Random choose
                     2. Show the peoples List
                     3. Show the chosen if there is any
+                    4. Manage People List
                     0. Exit""");
             ans = sc.next().charAt(0) + "";
 
@@ -39,21 +37,114 @@ public class Test {
                 case "1" -> randomChooseMenu();
                 case "2" -> showPeople(PEOPLE);
                 case "3" -> showChooses();
+                case "4" -> managePeopleMenu();
                 default -> System.err.println("not valid option");
             }
         } while (!ans.equals("0"));
     }
 
-    public static void showPeople(String[] people) {
-        Arrays.stream(people).forEach(Test::showName);
+    private static void managePeopleMenu() {
+        String ans;
+
+        do {
+            Scanner in = new Scanner(System.in);
+            hr();
+            System.out.println("""
+                                        
+                    1. To show people list
+                    2. To remove one
+                    3. To add one
+                    4. To Remove All
+                    5. To save
+                    0. Go back to main menu
+                    """);
+
+            ans = in.next().charAt(0) + "";
+            switch (ans) {
+                case "1" -> showPeople(PEOPLE);
+                case "2" -> removeOne();
+                case "3" -> addOne();
+                case "4" -> removeAll();
+                case "5" -> DataFromJson.savePeople(PEOPLE);
+                case "0" -> menu();
+                default -> System.err.println("not valid option!");
+            }
+        } while (!ans.equalsIgnoreCase("0"));
     }
 
-    public static void showName(String email) {
-        String name = email.split("@")[0];
-        String firstName = name.split("\\.")[0];
-        String lastName = name.split("\\.")[1];
+    private static void removeAll() {
+        System.err.println("Are you sure you want to remove all people? y/n");
+        if(new Scanner(System.in).next().equalsIgnoreCase("y")){
+            PEOPLE.clear();
+            System.out.println("All people where removed successfully");
+        }
 
-        name = toCamelCase(firstName) + " " + toCamelCase(lastName);
+    }
+
+    private static void addOne() {
+        System.out.println("0. to go back to menu:  \nPlease give the person email you want to add");
+        String inputtedEmail = new Scanner(System.in).nextLine();
+        if (Validator.validEmail(inputtedEmail)) {
+            PEOPLE.add(inputtedEmail);
+            System.out.println("Added successfully");
+            addOne();
+        } else if (inputtedEmail.equals("0")) {
+            managePeopleMenu();
+        } else {
+            System.err.println("Not a valid email");
+            addOne();
+        }
+    }
+
+    private static void removeOne() {
+        System.out.println("Please type the person nr or the person name you want to remove \n 0. to show people list");
+        String ans = new Scanner(System.in).nextLine();
+        try {
+            int index = Integer.parseInt(ans) - 1;
+
+            if (index == -1) {
+                showPeople(PEOPLE);
+                removeOne();
+            } else if (index < 0 || index > PEOPLE.size()) {
+                System.err.println("You have given invalid nr");
+                removeOne();
+            } else {
+                PEOPLE.remove(index);
+                System.out.println("removed successfully");
+            }
+        } catch (Exception e) {
+            //if person won't be removed show a message
+            if (!PEOPLE.removeIf(p -> getName(p).equalsIgnoreCase(ans))) {
+                System.err.println("You have given invalid name");
+                removeOne();
+            }
+        }
+
+        hr();
+        managePeopleMenu();
+    }
+
+
+    public static void showPeople(List<String> people) {
+        int count = 1;
+        for (String person : people) {
+            System.out.println(count + ". " + getName(person));
+            count++;
+        }
+        hr();
+    }
+
+
+    public static String getName(String email) {
+        String name = email.split("@")[0];
+
+        if(name.contains(".")){
+
+            String firstName = name.split("\\.")[0];
+            String lastName = name.split("\\.")[1];
+
+            name = toCamelCase(firstName) + " " + toCamelCase(lastName);
+        }
         if (name.contains("-")) {
             name = Stream.of(name)
                     .map(n -> {
@@ -63,7 +154,7 @@ public class Test {
                     })
                     .collect(Collectors.joining());
         }
-        System.out.println(name);
+        return name;
     }
 
     private static String toCamelCase(String text) {
@@ -76,10 +167,10 @@ public class Test {
             System.out.println("Do you want to load data from previews run? Y/N");
             String ans = new Scanner(System.in).next().charAt(0) + "";
             if (ans.equals("y"))
-                DataFromJson.loadChosen();
+               CHOSEN = DataFromJson.loadChosen();
             FIRST_RUN = false;
         }
-        CHOSEN.forEach(Test::showName);
+        CHOSEN.forEach(p-> System.out.println(getName(p)));
     }
 
     public static void randomChooseMenu() {
@@ -108,7 +199,7 @@ public class Test {
 
     }
 
-    public static void choseOne(String[] people) {
+    public static void choseOne(List<String> people) {
 
         //1. make a random chose
         //2. Check if that has been chosen before
@@ -139,10 +230,10 @@ public class Test {
 
         //we make a random chose
         Random random = new Random();
-        int randomChose = random.nextInt(people.length);
+        int randomChose = random.nextInt(people.size());
 
         //we check if this one has been chosen before
-        if (CHOSEN.contains(people[randomChose])) {
+        if (CHOSEN.contains(people.get(randomChose))) {
             //1,2,3,4...10
             //1=> 10% chance to be chosen
             //10=> 100% chance to be chosen
@@ -158,24 +249,24 @@ public class Test {
             // With 90/length we will get the increment we need to increase the % from one person to other one. Ex. 90/20=4
             //
 
-            int range = 90 - (90 / people.length * CHOSEN.indexOf(people[randomChose])) + 1;
+            int range = 90 - (90 / people.size() * CHOSEN.indexOf(people.get(randomChose))) + 1;
             int n = random.nextInt(range);
             if (n == 1) {
-                System.out.println(people[randomChose]);
-                CHOSEN.removeIf(p -> p.equals(people[randomChose]));
-                CHOSEN.addFirst(people[randomChose]);
+                System.out.println(people.get(randomChose));
+                CHOSEN.removeIf(p -> p.equals(people.get(randomChose)));
+                CHOSEN.addFirst(people.get(randomChose));
                 DataFromJson.saveChosen(CHOSEN);
 
             } else {
                 choseOne(people);
             }
         } else {
-            System.out.println(people[randomChose]);
+            System.out.println(people.get(randomChose));
             //we add the chosen
-            CHOSEN.addFirst(people[randomChose]);
+            CHOSEN.addFirst(people.get(randomChose));
 
             //if all people have been chosen once we remove the last one
-            if (CHOSEN.size() >= PEOPLE.length) {
+            if (CHOSEN.size() >= PEOPLE.size()) {
                 CHOSEN.removeLast();
             }
 
@@ -185,4 +276,7 @@ public class Test {
 
     }
 
+    public static void hr() {
+        System.out.println("------------------------------------");
+    }
 }

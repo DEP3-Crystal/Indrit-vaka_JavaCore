@@ -20,3 +20,4 @@ george.sirbu@crystal-system.eu
 andrei.state@crystal-system.eu
 florin-adrian.dumitru@crystal-system.eu
 victor.hincu@crystal-system.eu
+stefan.ruci@crystal-system.eu
