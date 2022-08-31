@@ -8,20 +8,22 @@ public class OutputManager {
         System.out.println("""
                 Welcome to Hangman Game!
                 Please press:
-                    1. to start the game
-                    2. to view the game rules
-                    3. 
+                    1. to start a new the game (Sing-up)
+                    2. to Login (Load previous game)
+                    3. to view the game rules
+                    4. game stats
+                    0. to Exit the game
                 """);
         hr();
         return InputManager.getInt(scanner);
     }
-    //TODO: Finishing the game rules
     public static void showGameRules(){
         hr();
         System.out.println("""
                 A random word will be chosen,
                 You have to guess right word by suggesting different letters.
-                We will give you hints 
+                We will give you hints for each word.
+                For each letter you find you will get 1 score
                 """);
     }
 
@@ -62,7 +64,7 @@ public class OutputManager {
     }
 
     public static void hr() {
-        System.out.println(ConsoleColors.TEXT_RESET + "==============================================" + ConsoleColors.TEXT_RESET);
+        System.out.println(ConsoleColors.TEXT_RESET + "====================================================================" + ConsoleColors.TEXT_RESET);
     }
 
     public static void br() {
