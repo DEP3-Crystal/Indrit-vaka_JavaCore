@@ -49,7 +49,6 @@ public class OutputManager {
                 ConsoleColors.TEXT_BG_BLUE + ConsoleColors.TEXT_BLACK);
         hr();
     }
-
     public static void showMessage(String message) {
         System.out.println(message + ConsoleColors.TEXT_RESET);
     }
@@ -57,16 +56,13 @@ public class OutputManager {
     public static void showMessage(String message, String color) {
         System.out.println(color + message + ConsoleColors.TEXT_RESET);
     }
-
     public static void showErrMessage(String message) {
         System.out.println(ConsoleColors.TEXT_RED + message);
         hr();
     }
-
     public static void hr() {
         System.out.println(ConsoleColors.TEXT_RESET + "====================================================================" + ConsoleColors.TEXT_RESET);
     }
-
     public static void br() {
         System.out.println();
     }

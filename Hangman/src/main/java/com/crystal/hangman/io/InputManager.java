@@ -85,6 +85,7 @@ public class InputManager {
                             At least one uppercase English letter
                             At least one lowercase English letter
                             At least one digit
+                            At least 8 digits
                             and At least one special character
                         """);
             }

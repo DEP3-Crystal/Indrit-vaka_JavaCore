@@ -13,7 +13,7 @@ garage;a building for housing a motor vehicle or vehicles
 grabbed;grasp or seize suddenly and roughly
 grandmother;the mother of one's father or mother
 heading;a title at the head of a page or section of a book
-independent;free from outside control; not subject to another's authority
+independent;free from outside control; not subject to another authority
 instant;happening or coming immediately
 manufacturing;the making of articles on a large scale using machinery; industrial production
 mathematics;the abstract science of number, quantity, and space, either as abstract concepts

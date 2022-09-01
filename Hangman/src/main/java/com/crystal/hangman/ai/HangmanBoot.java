@@ -166,7 +166,7 @@ public class HangmanBoot {
                     OutputManager.loseMessage();
                     break;
                 }
-                OutputManager.showMessage("You have " + (allowedMistake - MISTAKE) + " chances");
+                OutputManager.showMessage("You have " +TEXT_RED+ (allowedMistake - MISTAKE) +TEXT_RESET+ " chances");
 
             }
             OutputManager.showMessage("used letters" + usedLetters);
@@ -193,6 +193,8 @@ public class HangmanBoot {
             resetGame();
         else if(!ans.equals("n")){
             OutputManager.showErrMessage("wrong answer"  + TEXT_RED + " Y/N");
+        } else {
+            UserData.saveUsers(users);
         }
     }
 
@@ -204,7 +206,7 @@ public class HangmanBoot {
     }
 
     private boolean hasLose() {
-        return ++MISTAKE > allowedMistake - 1;
+        return ++MISTAKE >= allowedMistake;
     }
 
     /**
