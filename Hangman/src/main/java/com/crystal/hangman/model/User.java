@@ -1,23 +1,23 @@
 package com.crystal.hangman.model;
-
 public class User {
     private String nickName;
     public static User currentUser;
+    private int totalScore;
     private int score = 0;
+    private String password;
 
-    public User(String nickName) {
-        this.nickName = nickName;
-        this.score =0;
+    public User(String nickName, String password) {
+        setNickName(nickName);
+        this.totalScore = 0;
         currentUser = this;
+        setPassword(password);
+    }
+    public String getPassword() {
+        return password;
     }
 
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public int getScore() {
@@ -27,7 +27,32 @@ public class User {
     public void setScore(int score) {
         this.score = score;
     }
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public int getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(int totalScore) {
+        this.totalScore = totalScore;
+    }
+
     public void incrementScore(int score) {
-        this.score += score;
+        this.totalScore += score;
+        this.score = this.totalScore;
+    }
+
+    /**
+     * @return nickname,totalScore,score,password
+     */
+    @Override
+    public String toString() {
+        return nickName + "," + totalScore + "," + score +"," + password;
     }
 }
