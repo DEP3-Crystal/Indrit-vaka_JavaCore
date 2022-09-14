@@ -10,4 +10,16 @@ public class Validator {
 
         return m.find();
     }
+
+    public static boolean isValidNumber(String number) {
+        return Pattern.compile("\\d").matcher(number).find();
+    }
+
+    public static boolean isValidLetter(String c) {
+        return Pattern.compile("[A-z]|[0-9]", Pattern.CASE_INSENSITIVE).matcher(c).find();
+    }
+    public static boolean containsOnlyLetters(String nickName){
+        return Pattern.compile("^[a-zA-Z\\s]*$").matcher(nickName).find();
+    }
+
 }

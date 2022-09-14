@@ -1,20 +1,21 @@
-package com.crystal.ramdom_person.dao;
-
-import jdk.jshell.spi.ExecutionControl;
+package com.crystal.ramdom_person.dao.old;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DataFromJson {
     public static LinkedList<String> loadChosen() {
         //check if we have some data
-        File file = new File("RandomPerson/src/main/resources/data.txt");
+        File file = new File("RandomPerson/src/main/resources/chosen.txt");
         //clean the chooses
         LinkedList<String> people = new LinkedList<>();
         if (file.exists()) {
@@ -42,7 +43,7 @@ public class DataFromJson {
     }
 
     public static void saveChosen(List<String> chosen) {
-        try (FileWriter file = new FileWriter("RandomPerson/src/main/resources/data.txt");) {
+        try (FileWriter file = new FileWriter("RandomPerson/src/main/resources/chosen.txt")) {
             String content;
             content = chosen.stream().map(s -> s + "\n").collect(Collectors.joining());
             file.write(content);
@@ -53,7 +54,7 @@ public class DataFromJson {
     }
 
     public static void savePeople(List<String> people) {
-        try (FileWriter file = new FileWriter("RandomPerson/src/main/resources/people.txt");) {
+        try (FileWriter file = new FileWriter("RandomPerson/src/main/resources/people.txt")) {
             String content = people.stream().map(s-> s + "\n").collect(Collectors.joining());
             file.write(content);
         } catch (Exception e) {
