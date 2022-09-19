@@ -1,4 +1,4 @@
-package com.crystal.ramdom_person;
+package com.crystal.ramdom_person.services;
 
 import com.crystal.ramdom_person.io.OutputManager;
 import com.crystal.ramdom_person.model.Person;
@@ -8,9 +8,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class GameManager {
+public class ChoseByPriority implements GameLogic {
 
-    public void choseOne(List<Person> people, LinkedList<Person> chosen) {
+    /**
+     * @param people People List
+     * @param chooses chosen list
+     * @return the chosen Person
+     */
+    public Person choseOne(List<Person> people, LinkedList<Person> chooses) {
 
         //1. make a random chose
         //2. Check if that has been chosen before
@@ -44,7 +49,7 @@ public class GameManager {
         int randomChose = random.nextInt(people.size());
 
         //we check if this one has been chosen before
-        if (chosen.contains(people.get(randomChose))) {
+        if (chooses.contains(people.get(randomChose))) {
             //1,2,3,4...10
             //1=> 10% chance to be chosen
             //10=> 100% chance to be chosen
@@ -60,30 +65,35 @@ public class GameManager {
             // With 90/length we will get the increment we need to increase the % from one person to other one. Ex. 90/20=4
             //
 
-            int range = 90 - (90 / people.size() * chosen.indexOf(people.get(randomChose))) + 1;
+            //The chances not to get chosen for last person who was chosen last.
+            int chancesNotToGetChosen = 90;
+
+            int range = chancesNotToGetChosen - (chancesNotToGetChosen / people.size() * chooses.indexOf(people.get(randomChose))) + 1;
             int n = random.nextInt(range);
             if (n == 1) {
                 OutputManager.showErrMessage(people.get(randomChose).toString());
-                chosen.removeIf(p -> p.equals(people.get(randomChose)));
-                chosen.addFirst(people.get(randomChose));
-                PersonUtility.dataSource.saveChosen(chosen);
-
+                Person chosenOne = people.get(randomChose);
+                chooses.removeIf(p -> p.equals(chosenOne));
+                updateChooses(people,chooses, chosenOne);
+                return chosenOne;
             } else {
-                choseOne(people,chosen);
+                return choseOne(people,chooses);
             }
         } else {
-            System.out.println(people.get(randomChose));
-            //we add the chosen
-            chosen.addFirst(people.get(randomChose));
-
-            //if all people have been chosen once we remove the last one
-            if (chosen.size() >= people.size()) {
-                chosen.removeLast();
-            }
-
-            PersonUtility.dataSource.saveChosen(chosen);
+            Person chosenOne = people.get(randomChose);
+            updateChooses(people,chooses, chosenOne);
+            return chosenOne;
         }
+    }
 
+    private static void updateChooses(List<Person> people, LinkedList<Person> chooses, Person chosenOne) {
+        chooses.addFirst(chosenOne);
+        //if all people have been chosen once we remove the last one
+        if (chooses.size() >= people.size()) {
+            chooses.removeLast();
+        }
+        PersonUtility.dataSource.saveChosen(chooses);
+        chosenOne.setChosenTimes(chosenOne.getChosenTimes()+1);
     }
 
 }

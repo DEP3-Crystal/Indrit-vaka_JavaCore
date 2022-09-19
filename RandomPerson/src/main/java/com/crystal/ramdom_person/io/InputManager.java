@@ -8,6 +8,13 @@ public class InputManager {
 
     /**
      * @param scanner scanner obj
+     * @return string text without any validation
+     */
+    public static  String getString(Scanner scanner){
+        return scanner.nextLine();
+    }
+    /**
+     * @param scanner scanner obj
      * @return a single letter no special characters allowed
      */
     public static String getLetter(Scanner scanner) {
@@ -29,11 +36,10 @@ public class InputManager {
 
     /**
      * This method returns a string without special characters, its may be used for nickName
-     *
      * @param scanner scanner obj
      * @return string without any special character
      */
-    public static String getWordString(Scanner scanner) {
+    public static String getWordLettersOnly(Scanner scanner) {
         String input;
         boolean valid;
         do {
