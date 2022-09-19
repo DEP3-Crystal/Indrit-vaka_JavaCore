@@ -22,10 +22,10 @@ public class OutputManager {
             showMessage("Do you want to load data from previews run? Y/N");
             String ans = InputManager.getLetter(PersonUtility.scanner);
             if (ans.equalsIgnoreCase("y"))
-                chosen = dataSource.loadChosen();
+                chosen = dataSource.loadChosen(true);
             PersonUtility.FIRST_RUN = false;
         }
-        chosen.forEach(person -> showMessage(person.getFullName()));
+        chosen.forEach(person -> showMessage(person.getFullName()+ ", chosen times: " + person.getChosenTimes()));
     }
 
     public static void showMessage(String message) {
