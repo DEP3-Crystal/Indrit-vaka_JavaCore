@@ -21,9 +21,25 @@ public class PersonDao {
         String inputtedEmail = InputManager.getString(PersonUtility.scanner);
 
         if (Validator.validEmail(inputtedEmail)) {
-            people.add(new Person(inputtedEmail));
+            if(Validator.canExtractName(inputtedEmail)){
+
+                people.add(new Person(inputtedEmail));
+                addOne(people);
+            }else{
+                OutputManager.showMessage("We can't extract the name based on the email.");
+
+                OutputManager.showMessage("Please give your First name:");
+                var firstName = InputManager.getWordLettersOnly(PersonUtility.scanner);
+                OutputManager.showMessage("Please give your Last name:");
+                var lastName = InputManager.getWordLettersOnly(PersonUtility.scanner);
+                people.add(new Person.Builder()
+                        .email(inputtedEmail)
+                        .firstName(firstName)
+                        .lastName(lastName)
+                        .build());
+            }
             OutputManager.showMessage("Added successfully");
-            addOne(people);
+
         } else if (inputtedEmail.equals("0")) {
             return;
         } else {
@@ -34,9 +50,10 @@ public class PersonDao {
 
     public static void removeOne(List<Person> people) {
         OutputManager.showMessage("Please type the person nr or the full name of the person you want to remove \n "
-                + TEXT_BLUE + "\t1. to show people list\n\t0. Mennu");
-        String ans = InputManager.getLetter(PersonUtility.scanner);
+                + TEXT_BLUE + "\t1. to show people list\n\t0. Menu");
+        String ans = InputManager.getString(PersonUtility.scanner);
         try {
+            //Remove person by name
             int index = Integer.parseInt(ans) - 1;
 
             if (index + 1 == 1) {
@@ -46,7 +63,7 @@ public class PersonDao {
             } else if (index + 1 == 0) {
                 return;
             } else if (index < 0 || index > people.size()) {
-                System.err.println("You have given invalid nr");
+                OutputManager.showErrMessage("You have given invalid nr");
                 removeOne(people);
             } else {
                 people.remove(index);

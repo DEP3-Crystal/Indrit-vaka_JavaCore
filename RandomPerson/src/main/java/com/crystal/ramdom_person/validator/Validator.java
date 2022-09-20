@@ -6,7 +6,9 @@ public class Validator {
     public static boolean validEmail(String email) {
         return Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE).matcher(email).find();
     }
-
+    public static boolean canExtractName(String email ){
+       return email.split("@")[0].contains(".");
+    }
     public static boolean isValidNumber(String number) {
         return Pattern.compile("\\d").matcher(number).find();
     }

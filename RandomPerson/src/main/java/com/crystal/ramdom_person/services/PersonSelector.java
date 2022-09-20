@@ -11,12 +11,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.crystal.ramdom_person.io.ConsoleColors.*;
+import static com.crystal.ramdom_person.utility.PersonUtility.yn;
 
 public class PersonSelector {
 
     private final List<Person> people;
     private final DataSource dataSource;
     private final LinkedList<Person> chooses;
+    /**
+     * Tells if the user is asked once if he wants to load previews data
+     */
+    private boolean firstRun = true;
 
     public PersonSelector(DataSource dataSource) {
         chooses = dataSource.loadChosen();
@@ -26,9 +31,8 @@ public class PersonSelector {
 
     public void showMenu() {
 
+        OutputManager.showMessage("Please choose an option from list below: ",TEXT_GREEN);
         OutputManager.showMessage("""
-                                    
-                Welcome!
                 1. Random choose
                 2. Show the peoples List
                 3. Show the chosen if there is any
@@ -44,11 +48,9 @@ public class PersonSelector {
 
     private void handleAnswer(int ans) {
         switch (ans) {
-            case 1 -> {
-                randomChooseMenu();
-            }
+            case 1 -> randomChooseMenu();
             case 2 -> OutputManager.showPeople(people);
-            case 3 -> OutputManager.showChooses(chooses, PersonUtility.dataSource);
+            case 3 -> OutputManager.showChooses(chooses, dataSource, firstRun);
             case 4 -> managePeopleMenu();
             case 0 -> exit();
             default -> OutputManager.showErrMessage("Invalid option");
@@ -58,25 +60,33 @@ public class PersonSelector {
 
 
     public void managePeopleMenu() {
+        OutputManager.showMessage("Please choose an option from list below: ",TEXT_GREEN);
+
         OutputManager.showMessage("""
-                                    
                 1. To show people list
                 2. To remove one
                 3. To add one
                 4. To Remove All
-                5. To save
                 0. Go back to main menu
                 """);
         int answer = InputManager.getInt(PersonUtility.scanner);
         managePeopleAnswerHandler(answer);
-        managePeopleMenu();
     }
 
     private void managePeopleAnswerHandler(int answer) {
         switch (answer) {
-            case 1 -> OutputManager.showPeople(people);
-            case 2 -> PersonDao.removeOne(people);
-            case 3 -> PersonDao.addOne(people);
+            case 1 -> {
+                OutputManager.showPeople(people);
+                managePeopleMenu();
+            }
+            case 2 -> {
+                PersonDao.removeOne(people);
+                managePeopleMenu();
+            }
+            case 3 -> {
+                PersonDao.addOne(people);
+                managePeopleMenu();
+            }
             case 4 -> {
                 OutputManager.showMessage("Are you sure you want to remove all people? y/" + TEXT_BLUE + "n", TEXT_RED);
                 if (InputManager.getLetter(PersonUtility.scanner).equalsIgnoreCase("y")) {
@@ -84,8 +94,18 @@ public class PersonSelector {
                     OutputManager.showMessage("All people where removed successfully", TEXT_BLUE);
                 }
             }
-            case 5 -> dataSource.savePeople(people);
-            case 0 -> showMenu();
+            case 0 -> {
+                OutputManager.showMessage("Do you want to save the changes? " + yn);
+                String ans;
+                do {
+                    ans = InputManager.getLetter(PersonUtility.scanner);
+                } while (!ans.equalsIgnoreCase("y") && !ans.equalsIgnoreCase("n"));
+                if (ans.equalsIgnoreCase("y")) {
+                    dataSource.savePeople(people);
+                    OutputManager.showMessage("Saved successfully");
+                }
+                showMenu();
+            }
             default -> {
                 OutputManager.showErrMessage("Invalid Option");
                 managePeopleMenu();
@@ -100,8 +120,8 @@ public class PersonSelector {
 
         String yn = TEXT_BLUE + "y" + TEXT_RESET + "/" + TEXT_RED + "n" + TEXT_RESET;
         String ans;
-        if (PersonUtility.FIRST_RUN) {
-            PersonUtility.FIRST_RUN = false;
+        if (firstRun) {
+            firstRun = false;
             OutputManager.showMessage("Do you what to load the data from the preview Run? " + yn);
             ans = InputManager.getLetter(PersonUtility.scanner);
 
@@ -114,11 +134,12 @@ public class PersonSelector {
                 return;
             }
         }
-        manager.choseOne(people, chooses);
+
         do {
+            //TODO [0] should i add the chosen one at the method choseOne or here?
             Person chosenOne = manager.choseOne(people, chooses);
             OutputManager.showMessage(chosenOne.getFullName());
-
+            dataSource.saveChosen(chooses);
             OutputManager.showMessage("Do you want to make an other chose? " + yn + " 0. back to menu");
             ans = InputManager.getLetter(PersonUtility.scanner);
             if (ans.equalsIgnoreCase("0") || ans.equalsIgnoreCase("n"))

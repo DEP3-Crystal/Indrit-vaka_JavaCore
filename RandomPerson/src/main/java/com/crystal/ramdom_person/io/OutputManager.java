@@ -16,14 +16,14 @@ public class OutputManager {
         hr();
     }
 
-    public static void showChooses(List<Person> chosen, DataSource dataSource) {
+    public static void showChooses(List<Person> chosen, DataSource dataSource, boolean firstRun) {
         //we want to ask only if is first run if they want to load from file
-        if (PersonUtility.FIRST_RUN) {
+        if (firstRun) {
             showMessage("Do you want to load data from previews run? Y/N");
             String ans = InputManager.getLetter(PersonUtility.scanner);
             if (ans.equalsIgnoreCase("y"))
                 chosen = dataSource.loadChosen();
-            PersonUtility.FIRST_RUN = false;
+            firstRun = false;
         }
         chosen.forEach(person -> showMessage(person.getFullName() + ", chosen times: " + person.getChosenTimes()));
     }

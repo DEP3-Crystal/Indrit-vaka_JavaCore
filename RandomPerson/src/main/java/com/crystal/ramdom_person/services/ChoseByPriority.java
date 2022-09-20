@@ -1,8 +1,6 @@
 package com.crystal.ramdom_person.services;
 
-import com.crystal.ramdom_person.io.OutputManager;
 import com.crystal.ramdom_person.model.Person;
-import com.crystal.ramdom_person.utility.PersonUtility;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +9,7 @@ import java.util.Random;
 public class ChoseByPriority implements GameLogic {
 
     /**
+     * Peeks a random person from the people list by priority, and adds that to chooses list
      * @param people  People List
      * @param chooses chosen list
      * @return the chosen Person
@@ -36,7 +35,7 @@ public class ChoseByPriority implements GameLogic {
 
         // Result of priority.
         //  the first person who enters the list will have 10% chance to get chosen and for each other person who
-        //      joins the list his % will be increased by 80/users.length
+        //      joins the list his % will be increased by 90/users.length
 
 
         //Others
@@ -72,28 +71,28 @@ public class ChoseByPriority implements GameLogic {
             int range = chancesNotToGetChosen - (chancesNotToGetChosen / people.size() * chooses.indexOf(people.get(randomChose))) + 1;
             int n = random.nextInt(range);
             if (n == 1) {
-                OutputManager.showErrMessage(people.get(randomChose).toString());
                 Person chosenOne = people.get(randomChose);
-                chooses.removeIf(p -> p.equals(chosenOne));
-                updateChooses(people, chooses, chosenOne);
+                // TODO [0] should i update the chosen list here or where i call the method?
+                removePerson(chooses, chosenOne);
+                updateChooses(chooses, chosenOne);
                 return chosenOne;
             } else {
                 return choseOne(people, chooses);
             }
         } else {
             Person chosenOne = people.get(randomChose);
-            updateChooses(people, chooses, chosenOne);
+            updateChooses(chooses, chosenOne);
             return chosenOne;
         }
     }
 
-    private static void updateChooses(List<Person> people, LinkedList<Person> chooses, Person chosenOne) {
+    private void removePerson(List<Person> people, Person person){
+        people.removeIf(p -> p.equals(person));
+
+    }
+    //TODO [0] should i update the chosen list here or where i call the method?
+    private static void updateChooses(LinkedList<Person> chooses, Person chosenOne) {
         chooses.addFirst(chosenOne);
-        //if all people have been chosen once we remove the last one
-        if (chooses.size() >= people.size()) {
-            chooses.removeLast();
-        }
-        PersonUtility.dataSource.saveChosen(chooses);
         chosenOne.setChosenTimes(chosenOne.getChosenTimes() + 1);
     }
 

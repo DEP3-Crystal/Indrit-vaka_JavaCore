@@ -1,14 +1,13 @@
 package com.crystal.ramdom_person.utility;
 
-import com.crystal.ramdom_person.dao.DataFromFile;
-import com.crystal.ramdom_person.dao.DataSource;
-
 import java.util.Scanner;
 
+import static com.crystal.ramdom_person.io.ConsoleColors.*;
+import static com.crystal.ramdom_person.io.ConsoleColors.TEXT_RESET;
+
 public class PersonUtility {
-    public static boolean FIRST_RUN = true;
-    public static DataSource dataSource = new DataFromFile();
+    // TODO [1] Is it okay to keep the scanner obj so i can use that on different places (InputManager, OutputManager)?
     public static Scanner scanner = new Scanner(System.in);
-    public static String choosesPath = "RandomPerson/src/main/resources/chosen.csv";
-    public static String peoplePath = "RandomPerson/src/main/resources/people.csv";
+    public static String yn = TEXT_BLUE + "y" + TEXT_RESET + "/" + TEXT_RED + "n" + TEXT_RESET;
+
 }

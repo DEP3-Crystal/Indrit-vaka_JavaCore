@@ -28,6 +28,12 @@ public class Person {
         this.lastName = extractLastName(email);
     }
 
+    public Person(String firstName, String lastName, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
     public Person(String email) {
         this(email, 0);
     }
@@ -96,6 +102,13 @@ public class Person {
 
         public Builder email(String email) {
             setEmail(email);
+            return this;
+        }
+        public Builder firstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }public Builder lastName(String lastName) {
+           this.lastName = lastName;
             return this;
         }
 
