@@ -13,8 +13,9 @@ import static com.crystal.ramdom_person.io.ConsoleColors.TEXT_BLUE;
 public class PersonDao {
 
     public static void removeAll(List<Person> people) {
-            people.clear();
+        people.clear();
     }
+
     public static void addOne(List<Person> people) {
         OutputManager.showMessage("0. to go back to menu:  \n" + TEXT_BLUE + "Please give the person email you want to add");
         String inputtedEmail = InputManager.getString(PersonUtility.scanner);
@@ -38,11 +39,11 @@ public class PersonDao {
         try {
             int index = Integer.parseInt(ans) - 1;
 
-            if (index +1 == 1) {
+            if (index + 1 == 1) {
                 OutputManager.showPeople(people);
                 removeOne(people);
 
-            } else if (index +1 ==0 ) {
+            } else if (index + 1 == 0) {
                 return;
             } else if (index < 0 || index > people.size()) {
                 System.err.println("You have given invalid nr");

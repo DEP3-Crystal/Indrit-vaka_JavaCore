@@ -3,7 +3,10 @@ package com.crystal.ramdom_person.old;
 import com.crystal.ramdom_person.dao.old.DataFromJson;
 import com.crystal.ramdom_person.validator.Validator;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -79,7 +82,7 @@ public class StartUp {
 
     private static void removeAll() {
         System.err.println("Are you sure you want to remove all people? y/n");
-        if(new Scanner(System.in).next().equalsIgnoreCase("y")){
+        if (new Scanner(System.in).next().equalsIgnoreCase("y")) {
             PEOPLE.clear();
             System.out.println("All people where removed successfully");
         }
@@ -143,7 +146,7 @@ public class StartUp {
     public static String getName(String email) {
         String name = email.split("@")[0];
 
-        if(name.contains(".")){
+        if (name.contains(".")) {
 
             String firstName = name.split("\\.")[0];
             String lastName = name.split("\\.")[1];
@@ -172,10 +175,10 @@ public class StartUp {
             System.out.println("Do you want to load data from previews run? Y/N");
             String ans = new Scanner(System.in).next().charAt(0) + "";
             if (ans.equals("y"))
-               CHOSEN = DataFromJson.loadChosen();
+                CHOSEN = DataFromJson.loadChosen();
             FIRST_RUN = false;
         }
-        CHOSEN.forEach(p-> System.out.println(getName(p)));
+        CHOSEN.forEach(p -> System.out.println(getName(p)));
     }
 
     public static void randomChooseMenu() {

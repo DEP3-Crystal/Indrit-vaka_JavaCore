@@ -55,7 +55,7 @@ public class DataFromJson {
 
     public static void savePeople(List<String> people) {
         try (FileWriter file = new FileWriter("RandomPerson/src/main/resources/people.txt")) {
-            String content = people.stream().map(s-> s + "\n").collect(Collectors.joining());
+            String content = people.stream().map(s -> s + "\n").collect(Collectors.joining());
             file.write(content);
         } catch (Exception e) {
             e.printStackTrace();

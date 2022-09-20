@@ -1,30 +1,30 @@
-package com.crystal.ramdom_person;
+package com.crystal.ramdom_person.services;
 
+import com.crystal.ramdom_person.dao.DataSource;
 import com.crystal.ramdom_person.dao.PersonDao;
 import com.crystal.ramdom_person.io.InputManager;
 import com.crystal.ramdom_person.io.OutputManager;
 import com.crystal.ramdom_person.model.Person;
-import com.crystal.ramdom_person.services.ChoseByPriority;
-import com.crystal.ramdom_person.services.GameLogic;
 import com.crystal.ramdom_person.utility.PersonUtility;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import static com.crystal.ramdom_person.io.ConsoleColors.*;
 
-public class StartUp {
-    private static List<Person> PEOPLE = new ArrayList<>();
-    public static LinkedList<Person> CHOOSES = new LinkedList<>();
+public class PersonSelector {
 
-    public static void main(String[] args) {
+    private final List<Person> people;
+    private final DataSource dataSource;
+    private final LinkedList<Person> chooses;
 
-        PEOPLE = PersonUtility.dataSource.loadPeople();
-        new StartUp().menu();
+    public PersonSelector(DataSource dataSource) {
+        chooses = dataSource.loadChosen();
+        people = dataSource.loadPeople();
+        this.dataSource = dataSource;
     }
 
-    public void menu() {
+    public void showMenu() {
 
         OutputManager.showMessage("""
                                     
@@ -34,21 +34,28 @@ public class StartUp {
                 3. Show the chosen if there is any
                 4. Manage People List
                 0. Exit""");
-        int ans = InputManager.getInt(PersonUtility.scanner);
+        int ans;
+        do {
+            ans = InputManager.getInt(PersonUtility.scanner);
+            handleAnswer(ans);
+        } while (ans != 0);
 
+    }
+
+    private void handleAnswer(int ans) {
         switch (ans) {
             case 1 -> {
-                GameLogic gameManager = new ChoseByPriority();
-                randomChooseMenu(gameManager);
+                randomChooseMenu();
             }
-            case 2 -> OutputManager.showPeople(PEOPLE);
-            case 3 -> OutputManager.showChooses(CHOOSES, PersonUtility.dataSource);
+            case 2 -> OutputManager.showPeople(people);
+            case 3 -> OutputManager.showChooses(chooses, PersonUtility.dataSource);
             case 4 -> managePeopleMenu();
             case 0 -> exit();
             default -> OutputManager.showErrMessage("Invalid option");
         }
-        menu();
+        showMenu();
     }
+
 
     public void managePeopleMenu() {
         OutputManager.showMessage("""
@@ -61,25 +68,41 @@ public class StartUp {
                 0. Go back to main menu
                 """);
         int answer = InputManager.getInt(PersonUtility.scanner);
-        switch (answer) {
-            case 1 -> OutputManager.showPeople(PEOPLE);
-            case 2 -> PersonDao.removeOne(PEOPLE);
-            case 3 -> PersonDao.addOne(PEOPLE);
-            case 4 -> {
-                OutputManager.showMessage("Are you sure you want to remove all people? y/" + TEXT_BLUE + "n", TEXT_RED);
-                if (InputManager.getLetter(PersonUtility.scanner).equalsIgnoreCase("y")) {
-                    PersonDao.removeAll(PEOPLE);
-                    OutputManager.showMessage("All people where removed successfully", TEXT_BLUE);
-                }
-            }
-            case 5 -> PersonUtility.dataSource.savePeople(PEOPLE);
-            case 0 -> menu();
-            default -> OutputManager.showErrMessage("Invalid Option");
-        }
+        managePeopleAnswerHandler(answer);
         managePeopleMenu();
     }
 
-    public void randomChooseMenu(GameLogic manager) {
+    private void managePeopleAnswerHandler(int answer) {
+        switch (answer) {
+            case 1 -> listAllPersons();
+            case 2 -> PersonDao.removeOne(people);
+            case 3 -> PersonDao.addOne(people);
+            case 4 -> {
+                OutputManager.showMessage("Are you sure you want to remove all people? y/" + TEXT_BLUE + "n", TEXT_RED);
+                if (InputManager.getLetter(PersonUtility.scanner).equalsIgnoreCase("y")) {
+                    PersonDao.removeAll(people);
+                    OutputManager.showMessage("All people where removed successfully", TEXT_BLUE);
+                }
+            }
+            case 5 -> dataSource.savePeople(people);
+            case 0 -> showMenu();
+            default -> {
+                OutputManager.showErrMessage("Invalid Option");
+                managePeopleMenu();
+            }
+        }
+    }
+
+    protected void listAllPersons() {
+
+
+    }
+
+
+    public void randomChooseMenu() {
+        //TODO Let user to chose between different implementation
+        GameLogic manager = new ChoseByPriority();
+
         String yn = TEXT_BLUE + "y" + TEXT_RESET + "/" + TEXT_RED + "n" + TEXT_RESET;
         String ans;
         if (PersonUtility.FIRST_RUN) {
@@ -89,22 +112,22 @@ public class StartUp {
 
             //check if users wants to load the old data
             if (ans.equalsIgnoreCase("Y")) {
-                CHOOSES = PersonUtility.dataSource.loadChosen();
+                dataSource.loadChosen();
             } else if (!ans.equalsIgnoreCase("n")) {
                 OutputManager.showErrMessage("Invalid Option");
-                randomChooseMenu(manager);
+                randomChooseMenu();
                 return;
             }
         }
-
+        manager.choseOne(people, chooses);
         do {
-            Person chosenOne = manager.choseOne(PEOPLE, CHOOSES);
+            Person chosenOne = manager.choseOne(people, chooses);
             OutputManager.showMessage(chosenOne.getFullName());
 
             OutputManager.showMessage("Do you want to make an other chose? " + yn + " 0. back to menu");
             ans = InputManager.getLetter(PersonUtility.scanner);
             if (ans.equalsIgnoreCase("0") || ans.equalsIgnoreCase("n"))
-                menu();
+                showMenu();
             while (!ans.equalsIgnoreCase("n") && !ans.equalsIgnoreCase("y")) {
                 OutputManager.showErrMessage("Invalid Option");
                 ans = InputManager.getLetter(PersonUtility.scanner);
@@ -116,4 +139,5 @@ public class StartUp {
     public void exit() {
         System.exit(0);
     }
+
 }

@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface DataSource {
     LinkedList<Person> loadChosen();
-    LinkedList<Person> loadChosen(boolean loadTimeOfChosen);
 
     List<Person> loadPeople();
 

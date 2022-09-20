@@ -11,7 +11,7 @@ import java.util.Random;
 public class ChoseByPriority implements GameLogic {
 
     /**
-     * @param people People List
+     * @param people  People List
      * @param chooses chosen list
      * @return the chosen Person
      */
@@ -58,10 +58,11 @@ public class ChoseByPriority implements GameLogic {
             //transforming the index to the priority
             //      so inc in this case will be 8% => 1*8,2*8,...10*8
 
-            // The formula will be 100 - (90 / length * chosen index +1)
+            // The formula will be 90 - (90 / length * chosen index )+1
             //      lets take some ex suppose that len = 10
             //          1. for the st1 el of the list => 90 - (90 / 10 * 0)= 90 -(0 ) +1= 91=> 91 will be range of generation nr means 10 % for th nr to be 1
-            //          2. str last el of list => 90 - (90/10 * 10) +1 = 90 - (90) +1 = 1 range if from 1-1 meaning 100% to get 1
+            //          2. st2 last el of list => 90 - (90/10 * 10) +1 = 90 - (90) +1 = 1 range if from 1-1 meaning 100% to get 1
+            //          2. st2 last el of list => 90 - (90/10 * 2) +1 = 90 - (18) +1 = 72 range if from 1-72 meaning 28% to get 1
             // With 90/length we will get the increment we need to increase the % from one person to other one. Ex. 90/20=4
             //
 
@@ -74,14 +75,14 @@ public class ChoseByPriority implements GameLogic {
                 OutputManager.showErrMessage(people.get(randomChose).toString());
                 Person chosenOne = people.get(randomChose);
                 chooses.removeIf(p -> p.equals(chosenOne));
-                updateChooses(people,chooses, chosenOne);
+                updateChooses(people, chooses, chosenOne);
                 return chosenOne;
             } else {
-                return choseOne(people,chooses);
+                return choseOne(people, chooses);
             }
         } else {
             Person chosenOne = people.get(randomChose);
-            updateChooses(people,chooses, chosenOne);
+            updateChooses(people, chooses, chosenOne);
             return chosenOne;
         }
     }
@@ -93,7 +94,7 @@ public class ChoseByPriority implements GameLogic {
             chooses.removeLast();
         }
         PersonUtility.dataSource.saveChosen(chooses);
-        chosenOne.setChosenTimes(chosenOne.getChosenTimes()+1);
+        chosenOne.setChosenTimes(chosenOne.getChosenTimes() + 1);
     }
 
 }

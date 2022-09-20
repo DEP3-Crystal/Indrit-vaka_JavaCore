@@ -11,13 +11,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 public class DataFromFile implements DataSource {
 
     public LinkedList<Person> loadChosen() {
-        return loadChosen(false);
-    }
-
-    public LinkedList<Person> loadChosen(boolean loadTimeOfChosen) {
         //TODO Invoke the constructor to load the names
         try (CSVParser csvParser = CSVParser.parse(new FileReader(PersonUtility.choosesPath),
                 CSVFormat.Builder.create()
@@ -27,7 +24,7 @@ public class DataFromFile implements DataSource {
             return csvParser.stream().map(record ->
                     new Person.Builder()
                             .email(record.get("email"))
-                            .chosenTimes(loadTimeOfChosen ? Integer.parseInt(record.get("chosen-times")) : 0)
+                            .chosenTimes(Integer.parseInt(record.get("chosen-times")))
                             .build()).collect(Collectors.toCollection(LinkedList::new));
 
         } catch (IOException e) {
@@ -53,7 +50,7 @@ public class DataFromFile implements DataSource {
 
 
         try (CSVPrinter printer = new CSVPrinter(new FileWriter(PersonUtility.choosesPath), CSVFormat.DEFAULT)) {
-            printer.printRecord("email","chosen-times");
+            printer.printRecord("email", "chosen-times");
             for (Person person : chosen) {
                 printer.printRecord(person.getEmail(), person.getChosenTimes());
             }
