@@ -9,6 +9,7 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
+        <module>Hangman</module>
         <module>RandomPerson</module>
     </modules>
 
@@ -17,5 +18,7 @@
         <maven.compiler.target>18</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     
+
 </project>
