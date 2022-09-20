@@ -10,9 +10,10 @@ public class InputManager {
      * @param scanner scanner obj
      * @return string text without any validation
      */
-    public static  String getString(Scanner scanner){
+    public static String getString(Scanner scanner) {
         return scanner.nextLine();
     }
+
     /**
      * @param scanner scanner obj
      * @return a single letter no special characters allowed
@@ -36,6 +37,7 @@ public class InputManager {
 
     /**
      * This method returns a string without special characters, its may be used for nickName
+     *
      * @param scanner scanner obj
      * @return string without any special character
      */
@@ -52,6 +54,7 @@ public class InputManager {
         } while (!valid);
         return input;
     }
+
     /**
      * Gets input from user and makes sure that's a number
      *

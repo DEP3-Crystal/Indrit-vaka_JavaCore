@@ -1,8 +1,6 @@
 package com.crystal.ramdom_person.services;
 
-import com.crystal.ramdom_person.io.OutputManager;
 import com.crystal.ramdom_person.model.Person;
-import com.crystal.ramdom_person.utility.PersonUtility;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +9,8 @@ import java.util.Random;
 public class ChoseByPriority implements GameLogic {
 
     /**
-     * @param people People List
+     * Peeks a random person from the people list by priority, and adds that to chooses list
+     * @param people  People List
      * @param chooses chosen list
      * @return the chosen Person
      */
@@ -36,7 +35,7 @@ public class ChoseByPriority implements GameLogic {
 
         // Result of priority.
         //  the first person who enters the list will have 10% chance to get chosen and for each other person who
-        //      joins the list his % will be increased by 80/users.length
+        //      joins the list his % will be increased by 90/users.length
 
 
         //Others
@@ -58,10 +57,11 @@ public class ChoseByPriority implements GameLogic {
             //transforming the index to the priority
             //      so inc in this case will be 8% => 1*8,2*8,...10*8
 
-            // The formula will be 100 - (90 / length * chosen index +1)
+            // The formula will be 90 - (90 / length * chosen index )+1
             //      lets take some ex suppose that len = 10
             //          1. for the st1 el of the list => 90 - (90 / 10 * 0)= 90 -(0 ) +1= 91=> 91 will be range of generation nr means 10 % for th nr to be 1
-            //          2. str last el of list => 90 - (90/10 * 10) +1 = 90 - (90) +1 = 1 range if from 1-1 meaning 100% to get 1
+            //          2. st2 last el of list => 90 - (90/10 * 10) +1 = 90 - (90) +1 = 1 range if from 1-1 meaning 100% to get 1
+            //          2. st2 last el of list => 90 - (90/10 * 2) +1 = 90 - (18) +1 = 72 range if from 1-72 meaning 28% to get 1
             // With 90/length we will get the increment we need to increase the % from one person to other one. Ex. 90/20=4
             //
 
@@ -71,29 +71,29 @@ public class ChoseByPriority implements GameLogic {
             int range = chancesNotToGetChosen - (chancesNotToGetChosen / people.size() * chooses.indexOf(people.get(randomChose))) + 1;
             int n = random.nextInt(range);
             if (n == 1) {
-                OutputManager.showErrMessage(people.get(randomChose).toString());
                 Person chosenOne = people.get(randomChose);
-                chooses.removeIf(p -> p.equals(chosenOne));
-                updateChooses(people,chooses, chosenOne);
+                // TODO [0] should i update the chosen list here or where i call the method?
+                removePerson(chooses, chosenOne);
+                updateChooses(chooses, chosenOne);
                 return chosenOne;
             } else {
-                return choseOne(people,chooses);
+                return choseOne(people, chooses);
             }
         } else {
             Person chosenOne = people.get(randomChose);
-            updateChooses(people,chooses, chosenOne);
+            updateChooses(chooses, chosenOne);
             return chosenOne;
         }
     }
 
-    private static void updateChooses(List<Person> people, LinkedList<Person> chooses, Person chosenOne) {
+    private void removePerson(List<Person> people, Person person){
+        people.removeIf(p -> p.equals(person));
+
+    }
+    //TODO [0] should i update the chosen list here or where i call the method?
+    private static void updateChooses(LinkedList<Person> chooses, Person chosenOne) {
         chooses.addFirst(chosenOne);
-        //if all people have been chosen once we remove the last one
-        if (chooses.size() >= people.size()) {
-            chooses.removeLast();
-        }
-        PersonUtility.dataSource.saveChosen(chooses);
-        chosenOne.setChosenTimes(chosenOne.getChosenTimes()+1);
+        chosenOne.setChosenTimes(chosenOne.getChosenTimes() + 1);
     }
 
 }

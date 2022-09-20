@@ -21,33 +21,36 @@ public class Person {
 
     public Person(String email, int chosenTimes) {
         if (!Validator.validEmail(email))
-            throw new IllegalArgumentException("Not valid Email.");
+            throw new IllegalArgumentException("Not valid Email: " + email);
         this.email = email;
         this.chosenTimes = chosenTimes;
-        String fullName = extractFullName(email);
-        this.firstName = extractFirstName(fullName);
-        this.lastName = extractLastName(fullName);
+        this.firstName = extractFirstName(email);
+        this.lastName = extractLastName(email);
     }
+
+    public Person(String firstName, String lastName, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
     public Person(String email) {
         this(email, 0);
     }
-    private Person(Builder builder){
+
+    private Person(Builder builder) {
         this.chosenTimes = builder.chosenTimes;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
         this.email = builder.email;
     }
 
-    private static String extractFullName(String email) {
-        return email.split("@")[0];
-    }
-
-    private static String extractFirstName(String fullName) {
+    private static String extractFirstName(String email) {
         String firstName;
-        if (fullName.contains("."))
-            firstName = fullName.split("\\.")[0];
+        if (email.contains("."))
+            firstName = email.split("\\.")[0];
         else {
-            firstName = toPascalCasing(fullName);
+            firstName = toPascalCasing(email.split("@")[0]);
         }
         if (firstName.contains("-")) {
             firstName = Stream.of(firstName)
@@ -61,13 +64,14 @@ public class Person {
         return firstName;
     }
 
-    private static String extractLastName(String fullName) {
+    private static String extractLastName(String email) {
         String lastName;
-        if (fullName.contains(".")) {
-            lastName = fullName.split("\\.")[1];
+        email = email.split("@")[0];
+        if (email.contains(".")) {
+            lastName = email.split("\\.")[1];
             lastName = toPascalCasing(lastName);
         } else {
-            lastName = fullName;
+            lastName = email;
         }
         return lastName;
     }
@@ -82,28 +86,38 @@ public class Person {
                 " {" + email + "}";
     }
 
-    public static class Builder{
+    public static class Builder {
         private String firstName;
         private String lastName;
         private String email;
         private int chosenTimes;
 
         private void setEmail(String email) {
+            if(!Validator.validEmail(email))
+                throw new IllegalArgumentException("Not valid email: " + email);
             this.email = email;
-            String fullName = extractFullName(email);
-            this.firstName = extractFirstName(fullName);
-            this.lastName = extractLastName(fullName);
+            this.firstName = extractFirstName(email);
+            this.lastName = extractLastName(email);
         }
 
-        public Builder email(String email){
+        public Builder email(String email) {
             setEmail(email);
             return this;
         }
-        public Builder chosenTimes(int chosenTimes){
+        public Builder firstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }public Builder lastName(String lastName) {
+           this.lastName = lastName;
+            return this;
+        }
+
+        public Builder chosenTimes(int chosenTimes) {
             this.chosenTimes = chosenTimes;
             return this;
         }
-        public Person build(){
+
+        public Person build() {
             return new Person(this);
         }
     }
