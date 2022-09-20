@@ -74,7 +74,7 @@ public class PersonSelector {
 
     private void managePeopleAnswerHandler(int answer) {
         switch (answer) {
-            case 1 -> listAllPersons();
+            case 1 -> OutputManager.showPeople(people);
             case 2 -> PersonDao.removeOne(people);
             case 3 -> PersonDao.addOne(people);
             case 4 -> {
@@ -91,11 +91,6 @@ public class PersonSelector {
                 managePeopleMenu();
             }
         }
-    }
-
-    protected void listAllPersons() {
-
-
     }
 
 
