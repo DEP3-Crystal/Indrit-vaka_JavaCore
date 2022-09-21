@@ -1,8 +1,8 @@
 # Random Chose person
 
 1. make a random chose
-   2. Check if that has been chosen before
-   3. If no show that, and add that to beginning of the chosen list
+  - 2. Check if that has been chosen before
+  - 3. If no show that, and add that to beginning of the chosen list
 4. In no make a random chose again based on the person priority
 4. If we don't have any chose after step 4 se go again to step 1;
 
