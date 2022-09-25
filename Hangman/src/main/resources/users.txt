@@ -1,2 +1,0 @@
-Indrit,0,0,Indrit1.
-test,0,0,tesT225.
