@@ -6,6 +6,7 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 @Data
 public class Person {
     private final int id;
@@ -27,7 +28,12 @@ public class Person {
         this.address = address;
         this.accounts = new ArrayList<>();
     }
-    public void addAccount(Account account){
+
+    public String getFullName() {
+        return getFirstName() + " " + getLastName();
+    }
+
+    public void addAccount(Account account) {
         this.accounts.add(account);
     }
 }

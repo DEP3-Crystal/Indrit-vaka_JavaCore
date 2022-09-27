@@ -1,12 +1,14 @@
 package com.crystal.atm.dao;
 
+import com.crystal.atm.model.account.Card;
 import com.crystal.atm.model.person.Person;
 
 import java.util.List;
+import java.util.Map;
 
-public class DataFromDB implements DataAccess{
+public class DataFromDB implements DataAccess {
     @Override
-    public List<Person> getPeople() {
+    public Map<Integer, Person> getPeople() {
         return null;
     }
 
@@ -23,5 +25,10 @@ public class DataFromDB implements DataAccess{
     @Override
     public void savePeople(List<Person> people) {
 
+    }
+
+    @Override
+    public Map<String, Card> getCards() {
+        return null;
     }
 }

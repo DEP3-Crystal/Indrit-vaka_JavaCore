@@ -3,12 +3,13 @@
 // (powered by FernFlower decompiler)
 //
 
-package com.crystal.atm.model.account;
+package com.crystal.atm.model;
 
-public enum CardType {
-    CREDIT_CARD,
-    DEBIT_CARD;
+public enum CurrencyType {
+    EURO,
+    USD,
+    LEK;
 
-    CardType() {
+    CurrencyType() {
     }
 }

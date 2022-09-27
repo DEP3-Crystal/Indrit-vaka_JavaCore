@@ -7,19 +7,18 @@ import java.util.Scanner;
 
 public class InputManager {
 
-
+    static Scanner scanner = new Scanner(System.in);
     /**
-     * @param scanner scanner obj
      * @return string text without any validation
      */
-    public static String getString(Scanner scanner) {
+    public static String getString() {
         return scanner.nextLine();
     }
+
     /**
-     * @param scanner scanner obj
      * @return string text without any validation
      */
-    public static String getEmail(Scanner scanner) {
+    public static String getEmail() {
         String input;
         boolean valid;
         do {
@@ -35,10 +34,9 @@ public class InputManager {
     }
 
     /**
-     * @param scanner scanner obj
      * @return a single letter no special characters allowed
      */
-    public static String getLetter(Scanner scanner) {
+    public static String getLetter() {
         String input;
         boolean valid;
         do {
@@ -58,10 +56,9 @@ public class InputManager {
     /**
      * This method returns a string without special characters, its may be used for nickName
      *
-     * @param scanner scanner obj
      * @return string without any special character
      */
-    public static String getWordLettersOnly(Scanner scanner) {
+    public static String getWordLettersOnly() {
         String input;
         boolean valid;
         do {
@@ -77,26 +74,45 @@ public class InputManager {
 
 
     /**
-     * @param scanner scanner obj
-     * @return return
+     * @return return a LocalDate obj created from CLI
      */
-    public static LocalDate getDate(Scanner scanner) {
+    public static LocalDate getDate() {
+        int year, month, dayOfMonth;
+
+        do {
             OutputManager.showLabel("year: ");
-            int year = getInt(scanner);
+            year = getInt();
+            if (Validator.isNotValidYear(year))
+                OutputManager.showErrMessage("Invalid year");
+        } while (Validator.isNotValidYear(year));
+        do {
+
             OutputManager.showLabel("month: ");
-            int month = getInt(scanner);
+            month = getInt();
+            if (Validator.isNotValidMonth(month)) {
+                OutputManager.showErrMessage("Invalid Month");
+            }
+
+        } while (Validator.isNotValidMonth(month));
+        do {
+
             OutputManager.showLabel("date: ");
-            int dayOfMonth = getInt(scanner);
-            return LocalDate.of(year,month,dayOfMonth);
+            dayOfMonth = getInt();
+
+            if (Validator.isNotValidDay(year, month, dayOfMonth)) {
+                OutputManager.showErrMessage("Invalid day");
+            }
+        } while (Validator.isNotValidDay(year, month, dayOfMonth));
+        return LocalDate.of(year, month, dayOfMonth);
     }
+
 
     /**
      * Gets input from user and makes sure that's a number
      *
-     * @param scanner scanner obj
      * @return an int
      */
-    public static int getInt(Scanner scanner) {
+    public static int getInt() {
         String input;
         int number = -50;
         do {
@@ -110,9 +126,10 @@ public class InputManager {
         } while (!Validator.isValidNumber(input));
         return number;
     }
-    public static String getNumbersOnly(Scanner scanner) {
+
+    public static String getNumbersOnly() {
         String input;
-        String number ="";
+        String number = "";
         do {
             input = scanner.nextLine();
 

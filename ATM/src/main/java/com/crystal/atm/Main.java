@@ -1,27 +1,36 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.crystal.atm;
 
 import com.crystal.atm.dao.DataAccess;
 import com.crystal.atm.dao.DataFromMemory;
-import com.crystal.atm.model.person.Person;
+import com.crystal.atm.io.ConsoleColors;
+import com.crystal.atm.io.OutputManager;
+import com.crystal.atm.services.LogService;
 
-import java.util.List;
+import static com.crystal.atm.io.ConsoleColors.TEXT_BG_BLUE;
+import static com.crystal.atm.io.ConsoleColors.TEXT_BG_YELLOW;
 
 public class Main {
+
     public static void main(String[] args) {
-        DataAccess dataAccess = new DataFromMemory();
-        List<Person> people = dataAccess.getPeople();
+        try {
+            DataAccess dataAccess = new DataFromMemory();
+            OutputManager.showMessage(TEXT_BG_YELLOW
+                            + "\t\t\t"
+                            + TEXT_BG_BLUE
+                            + "  Welcome To ATM  "
+                            + TEXT_BG_YELLOW
+                            + "\t\t\t",
+                    TEXT_BG_BLUE + ConsoleColors.TEXT_BLACK);
+            Menu menu = new Menu(dataAccess);
+            menu.showMenu();
+        } catch (Exception var2) {
+            LogService.registerException(var2);
+        }
 
-        people.forEach(System.out::println);
-        Person indrit = people.stream().takeWhile(person -> person.getFirstName().equalsIgnoreCase("indrit")).findFirst().orElseThrow();
-
-        //let's make a deposit on first account of indrit
-        indrit.getAccounts().get(0).deposit("Monthly paycheck", "crystal-system", 500_00);
-        //let's make a withdrawal on first account
-        indrit.getAccounts().get(0).withdraw("mobile recharge", "vodafone albania", 15_00);
-        //let's se the balance we expect to be 48500
-        System.out.println(indrit.getAccounts().get(0).getBalance());
-        //lest se all the transactions
-        System.out.println("Indrit vaka transactions");
-        indrit.getAccounts().get(0).getTransactions().forEach(System.out::println);
     }
 }

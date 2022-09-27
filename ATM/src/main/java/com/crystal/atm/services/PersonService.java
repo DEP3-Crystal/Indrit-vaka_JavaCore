@@ -7,26 +7,24 @@ import com.crystal.atm.model.person.Address;
 import com.crystal.atm.model.person.Person;
 
 import java.time.LocalDate;
-import java.util.Scanner;
 
 public class PersonService {
-    public static void createPersonFromCLI(){
-        Scanner sc = new Scanner(System.in);
+    public static void createPersonFromCLI() {
         //TODO Welcome message
         OutputManager.showMessage("Welcome!");
         //Person details *
         OutputManager.showMessage("Please complete fields bellow to register new person!");
 
         OutputManager.showLabel("First Name: ");
-        String firstName = InputManager.getWordLettersOnly(sc);
+        String firstName = InputManager.getWordLettersOnly();
         OutputManager.showLabel("Last Name: ");
-        String lastName = InputManager.getWordLettersOnly(sc);
+        String lastName = InputManager.getWordLettersOnly();
         OutputManager.showMessage("BirthDay: ");
-        LocalDate bd = InputManager.getDate(sc);
+        LocalDate bd = InputManager.getDate();
         OutputManager.showLabel("Phone number: ");
-        String phoneNumber = InputManager.getNumbersOnly(sc);
+        String phoneNumber = InputManager.getNumbersOnly();
         OutputManager.showLabel("email address: ");
-        String email = InputManager.getEmail(sc);
+        String email = InputManager.getEmail();
         //Address details *
         //TODO Validation
         Address address = new Address("street...", "Tirane", "Albania", "Albania", "1001");

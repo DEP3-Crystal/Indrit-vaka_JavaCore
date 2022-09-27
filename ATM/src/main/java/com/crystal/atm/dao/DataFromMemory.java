@@ -1,16 +1,52 @@
 package com.crystal.atm.dao;
 
 import com.crystal.atm.model.account.Account;
+import com.crystal.atm.model.account.Card;
+import com.crystal.atm.model.account.CardType;
 import com.crystal.atm.model.person.Address;
 import com.crystal.atm.model.person.Person;
+import com.crystal.atm.services.account.CardService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DataFromMemory implements DataAccess {
     List<Person> people = new ArrayList<>();
+    List<Card> cards = new ArrayList<>();
 
+    //Loading Cards
+    {
+        var cardService = new CardService();
+        cards.add(new Card(
+                CardType.CREDIT_CARD,
+                0,
+                "000000000000",
+                "1234",
+                "225",
+                LocalDate.now().plusYears(3),
+                cardService.generatePin()));
+        cards.add(new Card(
+                CardType.CREDIT_CARD,
+                1,
+                "111111111111",
+                "1234",
+                "125",
+                LocalDate.now().plusYears(3),
+                cardService.generatePin()));
+        cards.add(new Card(
+                CardType.CREDIT_CARD,
+                1,
+                "222222222222",
+                "1234",
+                "125",
+                LocalDate.now().plusYears(3),
+                cardService.generatePin()));
+    }
+
+    //Loading People
     {
         //Address details *
         //TODO Validation
@@ -25,7 +61,7 @@ public class DataFromMemory implements DataAccess {
                         "indrit.vaka@crystal-system.eu",
                         address);
         indrit.addAccount(account);
-
+        indrit.getAccounts().get(0).addCard(cards.get(0));
         Person luka =
                 new Person(1, "Luka",
                         "Buziu",
@@ -34,6 +70,7 @@ public class DataFromMemory implements DataAccess {
                         "luka.buziu@crystal-system.eu",
                         address);
         luka.addAccount(account);
+        luka.getAccounts().get(0).addCard(cards.get(0));
 
         Person dmitri =
                 new Person(2, "Dmitri",
@@ -43,14 +80,17 @@ public class DataFromMemory implements DataAccess {
                         "dkittredge0@flickr.com",
                         address);
         dmitri.addAccount(account);
+        dmitri.getAccounts().get(0).addCard(cards.get(0));
+
         people.add(indrit);
         people.add(luka);
         people.add(dmitri);
     }
 
     @Override
-    public List<Person> getPeople() {
-        return people;
+    public Map<Integer, Person> getPeople() {
+        return people.stream()
+                .collect(Collectors.toMap(Person::getId, person -> person));
     }
 
     @Override
@@ -66,5 +106,9 @@ public class DataFromMemory implements DataAccess {
     @Override
     public void savePeople(List<Person> people) {
         this.people.addAll(people);
+    }
+    @Override
+    public Map<String, Card> getCards() {
+        return cards.stream().collect(Collectors.toMap(Card::getCardNumber, card -> card));
     }
 }
