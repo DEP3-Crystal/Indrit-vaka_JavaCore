@@ -1,34 +1,44 @@
 package com.crystal.atm.dao;
 
+import com.crystal.atm.model.account.Account;
 import com.crystal.atm.model.account.Card;
-import com.crystal.atm.model.person.Person;
+import com.crystal.atm.model.user.User;
 
-import java.util.List;
 import java.util.Map;
 
 public class DataFromDB implements DataAccess {
     @Override
-    public Map<Integer, Person> getPeople() {
+    public Map<Integer, User> getUsers() {
         return null;
     }
 
     @Override
-    public Person getPerson(int id) {
+    public User getUser(int id) {
         return null;
     }
 
     @Override
-    public void savePerson(Person person) {
+    public void addUser(User user) {
 
     }
 
     @Override
-    public void savePeople(List<Person> people) {
+    public void addUsers(Map<Integer, User> people) {
 
     }
 
     @Override
     public Map<String, Card> getCards() {
         return null;
+    }
+
+    @Override
+    public Map<String, Account> getAccounts() {
+        return null;
+    }
+
+    @Override
+    public void addAccount(Account accounts) {
+
     }
 }

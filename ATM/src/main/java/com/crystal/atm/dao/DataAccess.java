@@ -1,18 +1,22 @@
 package com.crystal.atm.dao;
 
+import com.crystal.atm.model.account.Account;
 import com.crystal.atm.model.account.Card;
-import com.crystal.atm.model.person.Person;
+import com.crystal.atm.model.user.User;
 
-import java.util.List;
 import java.util.Map;
 
 public interface DataAccess {
-    Map<Integer,Person> getPeople();
+    Map<Integer, User> getUsers();
 
-    Person getPerson(int id);
+    User getUser(int id);
 
-    void savePerson(Person person);
+    void addUser(User user);
 
-    void savePeople(List<Person> people);
+    void addUsers(Map<Integer, User> people);
+
     Map<String, Card> getCards();
+    Map<String, Account> getAccounts();
+    void addAccount(Account accounts);
+
 }

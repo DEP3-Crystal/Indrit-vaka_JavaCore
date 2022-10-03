@@ -12,12 +12,11 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CardService {
-    public CardService() {
-    }
 
-    public static Optional<Card> cardExist(Map<String, Card> cards, String cardNumber) {
+    public static Optional<Card> getCard(Map<String, Card> cards, String cardNumber) {
         return cards.entrySet().stream()
-                .takeWhile(card->card.getKey().equals(cardNumber))
+                .dropWhile(card -> !card.getKey().equals(cardNumber))
+                .takeWhile(card -> card.getKey().equals(cardNumber))
                 .map(Map.Entry::getValue)
                 .findFirst();
     }

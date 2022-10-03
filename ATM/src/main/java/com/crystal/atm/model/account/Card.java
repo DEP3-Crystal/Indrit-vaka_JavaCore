@@ -11,25 +11,28 @@ import java.time.LocalDate;
 
 @Data
 public class Card {
-    private final CardType type;
-    private final int personId;
     private final String cardNumber;
+    /**
+     * The account id
+    * */
+    private final String IBAN;
     private final String BIN;
     private final String CVV;
     private final LocalDate expirationDate;
+    private final CardType type;
     private String pin;
 
     public void setPin(String pin) {
         this.pin = pin;
     }
 
-    public Card(CardType type, int personId, String cardNumber, String bin, String cvv, LocalDate expirationDate, String pin) {
-        this.type = type;
-        this.personId = personId;
+    public Card(String cardNumber, String IBAN, String BIN, String CVV, LocalDate expirationDate, CardType type, String pin) {
         this.cardNumber = cardNumber;
-        this.BIN = bin;
-        this.CVV = cvv;
+        this.IBAN = IBAN;
+        this.BIN = BIN;
+        this.CVV = CVV;
         this.expirationDate = expirationDate;
+        this.type = type;
         this.pin = pin;
     }
 }

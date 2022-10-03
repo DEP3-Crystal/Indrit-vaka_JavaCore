@@ -13,11 +13,15 @@ import java.util.List;
 
 @Data
 public class Account {
+    /**
+     * The account id
+     */
     private final String IBAN;
+    private final int userId;
     private long balance;
     private final List<Transaction> transactions;
     private final List<Card> cards;
-    private CurrencyType currencyType;
+    private final CurrencyType currencyType;
 
     public void addCard(Card card) {
         this.cards.add(card);
@@ -29,25 +33,27 @@ public class Account {
 
     public void deposit(String description, String reference, long amount) {
         this.balance += amount;
-        Transaction transaction = new Deposit(description, reference, amount);
+        Transaction transaction = new Transaction(description, reference,"deposit", amount);
         this.addTransaction(transaction);
     }
 
     public void withdraw(String description, String reference, long amount) {
         this.balance -= amount;
-        Transaction transaction = new Withdraw(description, reference, amount);
+        Transaction transaction = new Transaction(description, reference,"withdraw", amount);
         this.addTransaction(transaction);
     }
 
-    public Account(String IBAN, long balance) {
+    public Account(String IBAN, int userId, long balance, CurrencyType currencyType) {
         this.IBAN = IBAN;
+        this.userId = userId;
         this.balance = balance;
-        this.transactions = new ArrayList();
-        this.cards = new ArrayList();
+        this.currencyType = currencyType;
+        this.transactions = new ArrayList<>();
+        this.cards = new ArrayList<>();
     }
 
-    public Account(String IBAN) {
-        this(IBAN, 0L);
+    public Account(String IBAN, int userId, CurrencyType currencyType) {
+        this(IBAN,userId, 0L, currencyType);
     }
 
 }

@@ -8,8 +8,7 @@ package com.crystal.atm;
 import com.crystal.atm.dao.DataAccess;
 import com.crystal.atm.dao.DataFromMemory;
 import com.crystal.atm.model.account.Transaction;
-import com.crystal.atm.model.person.Person;
-import com.crystal.atm.services.PersonService;
+import com.crystal.atm.model.user.User;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -21,15 +20,16 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        PersonService.createPersonFromCLI();
-
         DataAccess dataAccess = new DataFromMemory();
-        Map<Integer, Person> people = dataAccess.getPeople();
+
+        //PersonService.createPersonFromCLI(dataAccess);
+
+        Map<Integer, User> people = dataAccess.getUsers();
 
         PrintStream var10001 = System.out;
         Objects.requireNonNull(var10001);
         people.values().forEach(var10001::println);
-        Person indrit = people.entrySet().stream()
+        User indrit = people.entrySet().stream()
                 .takeWhile((person) -> person.getValue().getFirstName().equalsIgnoreCase("indrit"))
                 .map(Map.Entry::getValue)
                 .findFirst()

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @Data
-public abstract class Transaction {
+public class Transaction {
 
     protected final LocalDateTime dateTimeUTC;
     protected final String description;
@@ -26,20 +26,4 @@ public abstract class Transaction {
         this.type = type;
         this.amount = amount;
     }
-
-
-    public LocalDateTime getDateTimeUTC() {
-        return dateTimeUTC;
-    }
-
-    public abstract String getDescription();
-
-    public abstract long getAmount();
-
-    /**
-     * @return Company name where this purchase has been made.
-     */
-    public abstract String getReference();
-
-    public abstract String getType();
 }
