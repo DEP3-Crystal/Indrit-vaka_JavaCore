@@ -1,4 +1,4 @@
-package com.crystal.atm.model.person;
+package com.crystal.atm.model.user;
 
 import com.crystal.atm.model.account.Account;
 import lombok.Data;
@@ -6,9 +6,10 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 @Data
-public class Person {
-    private final int id;
+public class User {
+    private final int userId;
     private String firstName;
     private String lastName;
     private LocalDate birthDay;
@@ -17,8 +18,8 @@ public class Person {
     private Address address;
     private List<Account> accounts;
 
-    public Person(int id, String firstName, String lastName, LocalDate birthDay, String phoneNumber, String email, Address address) {
-        this.id = id;
+    public User(int userId, String firstName, String lastName, LocalDate birthDay, String phoneNumber, String email, Address address) {
+        this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDay = birthDay;
@@ -27,7 +28,12 @@ public class Person {
         this.address = address;
         this.accounts = new ArrayList<>();
     }
-    public void addAccount(Account account){
+
+    public String getFullName() {
+        return getFirstName() + " " + getLastName();
+    }
+
+    public void addAccount(Account account) {
         this.accounts.add(account);
     }
 }

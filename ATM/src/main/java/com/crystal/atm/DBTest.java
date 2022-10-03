@@ -1,4 +1,5 @@
 package com.crystal.atm;
+
 import java.sql.*;
 
 public class DBTest {
@@ -13,8 +14,8 @@ public class DBTest {
             //5. Execute the Query
             ResultSet resultSet = st.executeQuery("");
             //6. Process the result
-            while (resultSet.next()){
-                System.out.println(resultSet.getInt(0) + " " +resultSet.getString(1));
+            while (resultSet.next()) {
+                System.out.println(resultSet.getInt(0) + " " + resultSet.getString(1));
             }
 
             //7. Close

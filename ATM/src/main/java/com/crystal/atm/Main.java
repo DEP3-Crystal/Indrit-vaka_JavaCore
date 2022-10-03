@@ -1,27 +1,46 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.crystal.atm;
 
 import com.crystal.atm.dao.DataAccess;
 import com.crystal.atm.dao.DataFromMemory;
-import com.crystal.atm.model.person.Person;
+import com.crystal.atm.services.UserService;
+import com.crystal.atm.view.ConsoleColors;
+import com.crystal.atm.view.InputManager;
+import com.crystal.atm.view.InputManagerCli;
+import com.crystal.atm.view.OutputManager;
+import com.crystal.atm.services.LogService;
+import com.crystal.atm.services.account.AccountService;
+import com.crystal.atm.view.Menu;
 
-import java.util.List;
+import static com.crystal.atm.view.ConsoleColors.TEXT_BG_BLUE;
+import static com.crystal.atm.view.ConsoleColors.TEXT_BG_YELLOW;
 
 public class Main {
+
     public static void main(String[] args) {
-        DataAccess dataAccess = new DataFromMemory();
-        List<Person> people = dataAccess.getPeople();
+        OutputManager outputManager = new OutputManager();
+        InputManager inputManager = new InputManagerCli(outputManager);
+        UserService userService = new UserService();
+        AccountService accountService = new AccountService();
+        try {
+            DataAccess dataAccess = new DataFromMemory();
+            outputManager.showMessage(TEXT_BG_YELLOW
+                            + "\t\t\t"
+                            + TEXT_BG_BLUE
+                            + "  Welcome To ATM  "
+                            + TEXT_BG_YELLOW
+                            + "\t\t\t",
+                    TEXT_BG_BLUE + ConsoleColors.TEXT_BLACK);
 
-        people.forEach(System.out::println);
-        Person indrit = people.stream().takeWhile(person -> person.getFirstName().equalsIgnoreCase("indrit")).findFirst().orElseThrow();
+            Menu menu = new Menu(dataAccess, userService, accountService, outputManager, inputManager);
+            menu.showMenu();
+        } catch (Exception var2) {
+            LogService.registerException(var2);
+        }
 
-        //let's make a deposit on first account of indrit
-        indrit.getAccounts().get(0).deposit("Monthly paycheck", "crystal-system", 500_00);
-        //let's make a withdrawal on first account
-        indrit.getAccounts().get(0).withdraw("mobile recharge", "vodafone albania", 15_00);
-        //let's se the balance we expect to be 48500
-        System.out.println(indrit.getAccounts().get(0).getBalance());
-        //lest se all the transactions
-        System.out.println("Indrit vaka transactions");
-        indrit.getAccounts().get(0).getTransactions().forEach(System.out::println);
     }
 }
