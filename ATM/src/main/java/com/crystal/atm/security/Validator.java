@@ -13,6 +13,7 @@ public abstract class Validator {
         return email.split("@")[0].contains(".");
     }
 
+    //TODO allow negative numbers
     public static boolean isValidNumber(String number) {
         return Pattern.compile("^[0-9]+$").matcher(number).find();
     }

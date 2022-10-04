@@ -92,7 +92,6 @@ public class DataFromMemory implements DataAccess {
                         "indrit.vaka@crystal-system.eu",
                         address);
         indrit.addAccount(account);
-//        indrit.getAccounts().get(0).addCard(cards.get(0));
         User luka =
                 new User(2, "Luka",
                         "Buziu",
@@ -101,7 +100,6 @@ public class DataFromMemory implements DataAccess {
                         "luka.buziu@crystal-system.eu",
                         address);
         luka.addAccount(account);
-//        luka.getAccounts().get(0).addCard(cards.get(0));
 
         User dmitri =
                 new User(3, "Dmitri",
@@ -111,11 +109,12 @@ public class DataFromMemory implements DataAccess {
                         "dkittredge0@flickr.com",
                         address);
         dmitri.addAccount(account);
-//        dmitri.getAccounts().get(0).addCard(cards.get(0));
         List<User> people = new ArrayList<>();
         people.add(indrit);
         people.add(luka);
         people.add(dmitri);
+
+
         people = people.stream()
                 .peek(user -> {
                     //TODO Question
@@ -128,7 +127,6 @@ public class DataFromMemory implements DataAccess {
 
         this.users = people.stream()
                 .collect(Collectors.toMap(User::getUserId, person -> person));
-
 
 
     }

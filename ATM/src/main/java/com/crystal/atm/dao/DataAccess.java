@@ -16,7 +16,9 @@ public interface DataAccess {
     void addUsers(Map<Integer, User> people);
 
     Map<String, Card> getCards();
+
     Map<String, Account> getAccounts();
+
     void addAccount(Account accounts);
 
 }

@@ -6,7 +6,7 @@ import com.crystal.atm.model.user.User;
 import java.util.Map;
 
 public class UserService {
-    public User getOwnerOfAccount(Map<Integer, User> users,Account loggedInAccount) {
+    public User getOwnerOfAccount(Map<Integer, User> users, Account loggedInAccount) {
         return users.entrySet().stream()
                 .dropWhile(personEntry -> personEntry.getKey() != loggedInAccount.getUserId())
                 .takeWhile(personEntry -> personEntry.getKey() == loggedInAccount.getUserId())

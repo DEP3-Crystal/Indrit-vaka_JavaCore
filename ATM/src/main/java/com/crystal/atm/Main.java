@@ -7,14 +7,10 @@ package com.crystal.atm;
 
 import com.crystal.atm.dao.DataAccess;
 import com.crystal.atm.dao.DataFromMemory;
-import com.crystal.atm.services.UserService;
-import com.crystal.atm.view.ConsoleColors;
-import com.crystal.atm.view.InputManager;
-import com.crystal.atm.view.InputManagerCli;
-import com.crystal.atm.view.OutputManager;
 import com.crystal.atm.services.LogService;
+import com.crystal.atm.services.UserService;
 import com.crystal.atm.services.account.AccountService;
-import com.crystal.atm.view.Menu;
+import com.crystal.atm.view.*;
 
 import static com.crystal.atm.view.ConsoleColors.TEXT_BG_BLUE;
 import static com.crystal.atm.view.ConsoleColors.TEXT_BG_YELLOW;
@@ -22,7 +18,7 @@ import static com.crystal.atm.view.ConsoleColors.TEXT_BG_YELLOW;
 public class Main {
 
     public static void main(String[] args) {
-        OutputManager outputManager = new OutputManager();
+        OutputManager outputManager = new OutputManagerCli();
         InputManager inputManager = new InputManagerCli(outputManager);
         UserService userService = new UserService();
         AccountService accountService = new AccountService();
@@ -38,9 +34,12 @@ public class Main {
 
             Menu menu = new Menu(dataAccess, userService, accountService, outputManager, inputManager);
             menu.showMenu();
-        } catch (Exception var2) {
-            LogService.registerException(var2);
+        } catch (Exception e) {
+            LogService.registerException(e);
         }
+        //TODO dataAccess form DB
+        //TODO Spring boot
+
 
     }
 }
