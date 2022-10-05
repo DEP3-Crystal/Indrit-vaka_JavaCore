@@ -14,7 +14,7 @@ public class LogService {
     }
 
     public static void registerException(Exception e) {
-        try (var file = new FileWriter("ATM/src/main/resources/log.txt")) {
+        try (var file = new FileWriter("ATM/src/main/resources/log.txt",true)) {
             file.write(e.toString());
         } catch (FileNotFoundException ex) {
             throw new RuntimeException(ex);

@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CardService {
 
-    public static Optional<Card> getCard(Map<String, Card> cards, String cardNumber) {
+    public Optional<Card> getCard(Map<String, Card> cards, String cardNumber) {
         return cards.entrySet().stream()
                 .dropWhile(card -> !card.getKey().equals(cardNumber))
                 .takeWhile(card -> card.getKey().equals(cardNumber))

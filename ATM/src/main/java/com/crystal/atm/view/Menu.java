@@ -30,10 +30,11 @@ public class Menu {
     private final OutputManager outputManager;
     private final Map<String, Card> cards;
     private final Map<Integer, User> users;
+    private final  CardService cardService;
     private byte attempts = 0;
     Account loggedInAccount;
 
-    public Menu(DataAccess dataAccess, UserService userService, AccountService accountService, OutputManager outputManager, InputManager inputManager) {
+    public Menu(DataAccess dataAccess, UserService userService, AccountService accountService, OutputManager outputManager, InputManager inputManager, CardService cardService) {
         this.userService = userService;
         this.accountService = accountService;
         this.inputManager = inputManager;
@@ -41,6 +42,7 @@ public class Menu {
         this.dataAccess = dataAccess;
         cards = dataAccess.getCards();
         users = dataAccess.getUsers();
+        this.cardService = cardService;
     }
 
     public void showMenu() {
@@ -65,14 +67,14 @@ public class Menu {
 
     }
 
-    //TODO should i leave those here
+    // TODO should i leave those here
     private Optional<Card> getCardByCardNumber() {
         Optional<Card> optionalCard;
         String cardNumber;
         do {
             outputManager.showLabel(TEXT_RED + "0. exit\n" + TEXT_BLUE + "Card number:");
             cardNumber = inputManager.getNumbersOnly();
-            optionalCard = CardService.getCard(cards, cardNumber);
+            optionalCard = cardService.getCard(cards, cardNumber);
             if (optionalCard.isEmpty()) {
                 outputManager.showErrMessage("Invalid card number!");
                 outputManager.showMessage("Please make sure that you have typed card number right!");
@@ -95,7 +97,7 @@ public class Menu {
             }
             //if there are made 3 attempts already we block the card
             if (attempts >= 3) {
-                //TODO block the card
+                // TODO block the card
                 outputManager.showErrMessage("You have archived the limit attempts. Exiting...");
                 exit();
             }
@@ -103,7 +105,7 @@ public class Menu {
 
         } while (!card.getPin().equals(pin) && attempts <= 3);
     }
-    //TODO ------------------------------------------------------
+    // TODO ------------------------------------------------------
 
     private void welcomeMenu(User longedInUser) {
         outputManager.showMessage(longedInUser.getFullName() + " Welcome to ATM ");

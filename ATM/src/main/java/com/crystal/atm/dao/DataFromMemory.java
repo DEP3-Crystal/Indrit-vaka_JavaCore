@@ -91,7 +91,7 @@ public class DataFromMemory implements DataAccess {
                         "0676926458",
                         "indrit.vaka@crystal-system.eu",
                         address);
-        indrit.addAccount(account);
+        //indrit.addAccount(account);
         User luka =
                 new User(2, "Luka",
                         "Buziu",
@@ -99,7 +99,7 @@ public class DataFromMemory implements DataAccess {
                         "055461895",
                         "luka.buziu@crystal-system.eu",
                         address);
-        luka.addAccount(account);
+        //luka.addAccount(account);
 
         User dmitri =
                 new User(3, "Dmitri",
@@ -108,7 +108,7 @@ public class DataFromMemory implements DataAccess {
                         "654-718-4693",
                         "dkittredge0@flickr.com",
                         address);
-        dmitri.addAccount(account);
+        //dmitri.addAccount(account);
         List<User> people = new ArrayList<>();
         people.add(indrit);
         people.add(luka);
@@ -116,13 +116,13 @@ public class DataFromMemory implements DataAccess {
 
 
         people = people.stream()
+                .parallel()
                 .peek(user -> {
-                    //TODO Question
-                    this.accounts.forEach((key, account1) -> {
-                        if (account1.getUserId() == user.getUserId()) {
-                            user.addAccount(account);
-                        }
-                    });
+                    // TODO Question
+                    user.setAccounts(this.accounts.values().stream()
+                            .filter(v -> v.getUserId() == user.getUserId())
+                            .collect(Collectors.toList())
+                    );
                 }).collect(Collectors.toList());
 
         this.users = people.stream()

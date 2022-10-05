@@ -4,11 +4,13 @@ import com.crystal.atm.security.Validator;
 
 import java.time.LocalDate;
 import java.util.Scanner;
+import java.util.function.Predicate;
 
 public class InputManagerCli implements InputManager {
-
+    //TODO remove repeated code
     private final Scanner scanner = new Scanner(System.in);
     private final OutputManager outputManager;
+    private final Validator validator = new Validator();
 
     public InputManagerCli(OutputManager outputManager) {
         this.outputManager = outputManager;
@@ -25,38 +27,16 @@ public class InputManagerCli implements InputManager {
      * @return string text without any validation
      */
     public String getEmail() {
-        String input;
-        boolean valid;
-        do {
-            input = scanner.nextLine();
-            valid = Validator.isValidEmail(input);
-
-            if (!valid) {
-                outputManager.showErrMessage("please give a valid email");
-            }
-
-        } while (!valid);
-        return input.toLowerCase();
+        return validAnswer(validator::isValidEmail, "please give a valid email");
     }
 
     /**
      * @return a single letter no special characters allowed
      */
     public String getLetter() {
-        String input;
-        boolean valid;
-        do {
-            input = scanner.nextLine();
-            valid = Validator.isValidLetter(input);
-            if (input.length() > 1) {
-                outputManager.showErrMessage("you should give only one letter");
-            }
-            if (!valid) {
-                outputManager.showErrMessage("please give a valid letter [A-Z] or [a-z]");
-            }
 
-        } while (!valid || input.length() > 1);
-        return input.toLowerCase();
+        return validAnswer(validator::isValidLetter, "your name shouldn't contain non words character ($#/\\...)");
+
     }
 
     /**
@@ -65,17 +45,7 @@ public class InputManagerCli implements InputManager {
      * @return string without any special character
      */
     public String getWordLettersOnly() {
-        String input;
-        boolean valid;
-        do {
-            input = scanner.nextLine();
-            valid = Validator.containsOnlyLetters(input);
-
-            if (!valid) {
-                outputManager.showErrMessage("your name shouldn't contain non words character ($#/\\...)");
-            }
-        } while (!valid);
-        return input;
+        return validAnswer(validator::containsOnlyLetters, "your name shouldn't contain non words character ($#/\\...)");
     }
 
 
@@ -88,27 +58,27 @@ public class InputManagerCli implements InputManager {
         do {
             outputManager.showLabel("\tyear: ");
             year = getInt();
-            if (Validator.isNotValidYear(year))
+            if (validator.isNotValidYear(year))
                 outputManager.showErrMessage("Invalid year");
-        } while (Validator.isNotValidYear(year));
+        } while (validator.isNotValidYear(year));
         do {
 
             outputManager.showLabel("\tmonth: ");
             month = getInt();
-            if (Validator.isNotValidMonth(month)) {
+            if (validator.isNotValidMonth(month)) {
                 outputManager.showErrMessage("Invalid Month");
             }
 
-        } while (Validator.isNotValidMonth(month));
+        } while (validator.isNotValidMonth(month));
         do {
 
             outputManager.showLabel("\tdate: ");
             dayOfMonth = getInt();
 
-            if (Validator.isNotValidDay(year, month, dayOfMonth)) {
+            if (validator.isNotValidDay(year, month, dayOfMonth)) {
                 outputManager.showErrMessage("Invalid day");
             }
-        } while (Validator.isNotValidDay(year, month, dayOfMonth));
+        } while (validator.isNotValidDay(year, month, dayOfMonth));
         return LocalDate.of(year, month, dayOfMonth);
     }
 
@@ -119,48 +89,28 @@ public class InputManagerCli implements InputManager {
      * @return an int
      */
     public int getInt() {
-        String input;
-        int number = -50;
-        do {
-            input = scanner.nextLine();
-
-            if (!Validator.isValidNumber(input))
-                outputManager.showErrMessage("Please give a valid number");
-            else {
-                number = Integer.parseInt(input);
-            }
-        } while (!Validator.isValidNumber(input));
-        return number;
+        return Integer.parseInt(validAnswer(validator::isValidNumber, "Please give a valid number"));
     }
 
     public String getNumbersOnly() {
-        String input;
-        String number = "";
-        do {
-            input = scanner.nextLine();
-
-            if (!Validator.isValidNumber(input))
-                outputManager.showErrMessage("Please give a valid number");
-            else {
-                number = input;
-            }
-        } while (!Validator.isValidNumber(input));
-        return number;
+        return validAnswer(validator::isValidNumber, "Please give a valid number");
     }
 
     @Override
     public long getLong() {
+        return Long.parseLong(validAnswer(validator::isValidNumber, "Please give a valid number"));
+    }
+
+    public String validAnswer(Predicate<String> validator, String message) {
         String input;
-        long number = -50;
+
         do {
             input = scanner.nextLine();
 
-            if (!Validator.isValidNumber(input))
-                outputManager.showErrMessage("Please give a valid number");
-            else {
-                number = Integer.parseInt(input);
-            }
-        } while (!Validator.isValidNumber(input));
-        return number;
+            if (!validator.test(input))
+                outputManager.showErrMessage(message);
+
+        } while (!validator.test(input));
+        return input;
     }
 }
