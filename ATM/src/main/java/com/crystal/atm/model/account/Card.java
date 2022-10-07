@@ -14,7 +14,7 @@ public class Card {
     private final String cardNumber;
     /**
      * The account id
-    * */
+     */
     private final String IBAN;
     private final String BIN;
     private final String CVV;

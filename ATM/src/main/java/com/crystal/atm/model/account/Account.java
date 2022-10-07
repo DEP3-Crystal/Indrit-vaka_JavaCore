@@ -33,13 +33,13 @@ public class Account {
 
     public void deposit(String description, String reference, long amount) {
         this.balance += amount;
-        Transaction transaction = new Transaction(description, reference,"deposit", amount);
+        Transaction transaction = new Transaction(description, reference, "deposit", amount);
         this.addTransaction(transaction);
     }
 
     public void withdraw(String description, String reference, long amount) {
         this.balance -= amount;
-        Transaction transaction = new Transaction(description, reference,"withdraw", amount);
+        Transaction transaction = new Transaction(description, reference, "withdraw", amount);
         this.addTransaction(transaction);
     }
 
@@ -53,7 +53,7 @@ public class Account {
     }
 
     public Account(String IBAN, int userId, CurrencyType currencyType) {
-        this(IBAN,userId, 0L, currencyType);
+        this(IBAN, userId, 0L, currencyType);
     }
 
 }

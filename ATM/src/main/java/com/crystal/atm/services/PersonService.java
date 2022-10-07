@@ -2,16 +2,16 @@ package com.crystal.atm.services;
 
 import com.crystal.atm.dao.DataAccess;
 import com.crystal.atm.model.CurrencyType;
-import com.crystal.atm.view.InputManager;
-import com.crystal.atm.view.OutputManager;
 import com.crystal.atm.model.account.Account;
 import com.crystal.atm.model.user.Address;
 import com.crystal.atm.model.user.User;
+import com.crystal.atm.view.InputManager;
+import com.crystal.atm.view.OutputManagerCli;
 
 import java.time.LocalDate;
 
 public class PersonService {
-    public static void createPersonFromCLI(DataAccess dataAccess, InputManager inputManager, OutputManager outputManager) {
+    public static void createPersonFromCLI(DataAccess dataAccess, InputManager inputManager, OutputManagerCli outputManager) {
         outputManager.showMessage("Welcome!");
         //Person details *
         outputManager.showMessage("Please complete fields bellow to register new person!");
@@ -27,7 +27,7 @@ public class PersonService {
         outputManager.showLabel("\temail address: ");
         String email = inputManager.getEmail();
         //Address details *
-        int personId = dataAccess.getUsers().size()+1;
+        int personId = dataAccess.getUsers().size() + 1;
         Address address = new Address(personId, "street...", "Tirane", "Albania", "Albania", "1001");
         //Accounts
 

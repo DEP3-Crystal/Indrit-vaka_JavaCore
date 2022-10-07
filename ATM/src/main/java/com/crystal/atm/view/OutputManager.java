@@ -1,29 +1,16 @@
 package com.crystal.atm.view;
 
-public class OutputManager {
+public interface OutputManager {
 
-    public void showMessage(String message) {
-        System.out.println(message + ConsoleColors.TEXT_RESET);
-    }
+    void showMessage(String message);
 
-    public void showLabel(String message) {
-        System.out.print( message + ConsoleColors.TEXT_RESET);
-    }
+    void showLabel(String message);
 
-    public void showMessage(String message, String color) {
-        System.out.println(color + message + ConsoleColors.TEXT_RESET);
-    }
+    void showMessage(String message, String color);
 
-    public void showErrMessage(String message) {
-        System.out.println(ConsoleColors.TEXT_RED + message);
-        hr();
-    }
+    void showErrMessage(String message);
 
-    public void hr() {
-        System.out.println(ConsoleColors.TEXT_RESET + "====================================================================" + ConsoleColors.TEXT_RESET);
-    }
+    void hr();
 
-    public void br() {
-        System.out.println();
-    }
+    void br();
 }
