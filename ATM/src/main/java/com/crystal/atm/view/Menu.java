@@ -52,23 +52,21 @@ public class Menu {
 
     public void loginMenu() {
 
-        Optional<Card> optionalCard = getCardByCardNumber();
+        Card card = getCardByCardNumber();
         //we are 100% sure that we got the card
-        Card card = optionalCard.orElseThrow();
 
         validatePin(card);
 
         //now we are 100% that user has longed in
-        Card cardLoggedIn = optionalCard.orElseThrow();
         //get the account of that card
-        loggedInAccount = accountService.getCorrespondingAccount(dataAccess, cardLoggedIn);
+        loggedInAccount = accountService.getCorrespondingAccount(dataAccess, card);
         User longedInUser = userService.getOwnerOfAccount(users, loggedInAccount);
         welcomeMenu(longedInUser);
 
     }
 
     // TODO should i leave those here
-    private Optional<Card> getCardByCardNumber() {
+    private Card getCardByCardNumber() {
         Optional<Card> optionalCard;
         String cardNumber;
         do {
@@ -83,7 +81,7 @@ public class Menu {
                 exit();
             }
         } while (optionalCard.isEmpty());
-        return optionalCard;
+        return optionalCard.orElseThrow();
     }
 
     private void validatePin(Card card) {

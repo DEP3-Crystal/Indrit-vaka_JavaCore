@@ -1,7 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
 
 package com.crystal.atm;
 
@@ -10,13 +6,21 @@ import com.crystal.atm.dao.DataFromMemory;
 import com.crystal.atm.model.account.Transaction;
 import com.crystal.atm.model.user.User;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class Test {
-    public Test() {
+    public Test() throws IOException {
+        File file = new File("");
+        PrintWriter pr = new PrintWriter("");
+        pr.close();
+//        Files.write()
+
     }
 
     public static void main(String[] args) {

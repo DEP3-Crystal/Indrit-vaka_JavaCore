@@ -7,15 +7,16 @@ import java.time.ZoneOffset;
 
 @Data
 public class Transaction {
-
-    protected final LocalDateTime dateTimeUTC;
-    protected final String description;
+    // TODO
+   // private final String accountId;
+    private final LocalDateTime dateTimeUTC;
+    private final String description;
     /**
      * Company name where this purchase has been made.
      */
-    protected final String reference;
-    protected final String type;
-    protected final long amount;
+    private final String reference;
+    private final String type;
+    private final long amount;
 
 
     public Transaction(String description, String reference, String type, long amount) {

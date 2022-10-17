@@ -16,6 +16,7 @@ public class User {
     private String phoneNumber;
     private String email;
     private Address address;
+    // TODO [0]switch to map
     private List<Account> accounts;
 
     public User(int userId, String firstName, String lastName, LocalDate birthDay, String phoneNumber, String email, Address address) {
