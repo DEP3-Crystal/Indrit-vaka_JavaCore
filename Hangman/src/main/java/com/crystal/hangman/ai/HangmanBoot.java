@@ -1,13 +1,14 @@
 package com.crystal.hangman.ai;
 
+import com.crystal.hangman.dao.user.UserDataAccess;
 import com.crystal.hangman.dao.GameProperties;
 import com.crystal.hangman.dao.LoadWords;
+import com.crystal.hangman.dao.user.UserData;
 import com.crystal.hangman.io.InputManager;
 import com.crystal.hangman.io.OutputManager;
-import com.crystal.hangman.dao.UserData;
 import com.crystal.hangman.model.GameState;
 import com.crystal.hangman.model.User;
-import com.crystal.hangman.secirity.Validation;
+import com.crystal.hangman.service.UserService;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -18,19 +19,18 @@ import static com.crystal.hangman.io.ConsoleColors.*;
 
 public class HangmanBoot {
 
-    static GameState gameState;
-    static Scanner scanner;
-    static HangmanBoot hangmanBoot;
-    static int MISTAKE = 0;
-    static int allowedMistake;
-    List<User> users = new ArrayList<>();
+    private static int ALLOWED_PASSWORD_ATTEMPTS = 3;
+    private final UserService userService;
+    private final InputManager inputManager;
+    private final OutputManager outputManager;
+    private final UserDataAccess userDataAccess;
+    private List<User> users = new ArrayList<>();
+    private int mistake = 0;
+    private int allowedMistake;
+    private GameState gameState;
 
-    static int ALLOWED_PASSWORD_ATTEMPTS = 3;
-
-    static {
+    {
         gameState = GameState.IN_PROGRESS;
-        scanner = new Scanner(System.in);
-        hangmanBoot = new HangmanBoot();
         try {
             allowedMistake = GameProperties.getAllowedMistakes();
         } catch (IOException e) {
@@ -38,25 +38,47 @@ public class HangmanBoot {
         }
     }
 
+    public HangmanBoot(UserService userService, InputManager inputManager, OutputManager outputManager, UserDataAccess userDataAccess) {
+        this.userService = userService;
+        this.inputManager = inputManager;
+        this.outputManager = outputManager;
+        this.userDataAccess = userDataAccess;
+    }
+
 
     public void menu() {
-        int inputtedNumber = OutputManager.showMenu(scanner);
+        int inputtedNumber = showMenu();
         users = UserData.loadUsers();
         switch (inputtedNumber) {
             case 1 -> singUp();
             case 2 -> logIn();
-            case 3 -> OutputManager.showGameRules();
+            case 3 -> outputManager.showGameRules();
             case 4 -> showGameStats();
             case 0 -> exitGame();
         }
     }
 
+    public int showMenu() {
+        outputManager.hr();
+        outputManager.showMessage("""
+                Welcome to Hangman Game!
+                Please press:
+                    1. to start a new the game (Sing-up)
+                    2. to Login (Load previous game)
+                    3. to view the game rules
+                    4. game stats
+                    0. to Exit the game
+                """);
+        outputManager.hr();
+        return inputManager.getInt();
+    }
+
     private void showGameStats() {
-        OutputManager.showMessage("NickName: \t\tTotalScore", TEXT_BLUE);
-        users.forEach(user -> OutputManager.showMessage(TEXT_GREEN+ user.getNickName() + "\t\t\t"+ TEXT_GREEN + user.getTotalScore()));
-        OutputManager.hr();
-        OutputManager.showMessage("any key to go back to Menu", TEXT_BLUE);
-        InputManager.getString(scanner);
+        outputManager.showMessage("NickName: \t\tTotalScore", TEXT_BLUE);
+        users.forEach(user -> outputManager.showMessage(TEXT_GREEN + user.getNickName() + "\t\t\t" + TEXT_GREEN + user.getTotalScore()));
+        outputManager.hr();
+        outputManager.showMessage("any key to go back to Menu", TEXT_BLUE);
+        inputManager.getString();
         menu();
     }
 
@@ -65,71 +87,111 @@ public class HangmanBoot {
         System.exit(0);
     }
 
-    private void logIn() {
-        OutputManager.showMessage("Please provide your nickName");
-        String nickName = InputManager.getWordString(scanner);
+    private void logInOld() {
+        outputManager.showMessage("Please provide your nickName");
+        String nickName = inputManager.getWordString();
         if (users.stream().noneMatch(user -> user.getNickName().equals(nickName))) {
-            OutputManager.showErrMessage("wrong nickName, there doesn't exist a user with that nickname");
-            OutputManager.showMessage("""
+            outputManager.showErrMessage("wrong nickName, there doesn't exist a user with that nickname");
+            outputManager.showMessage("""
                     1. Try again
                     2. SingUp
                     """);
-            int ans = InputManager.getInt(scanner);
+            int ans = inputManager.getInt();
             switch (ans) {
                 case 1 -> logIn();
                 case 2 -> singUp();
             }
         }
+
         User user = users.stream().filter(user1 -> user1.getNickName().equals(nickName)).toList().get(0);
-        OutputManager.showMessage("Please type you password:");
-        String password = InputManager.getString(scanner);
+        outputManager.showMessage("Please type you password:");
+        String password = inputManager.getString();
         int attempts = 0;
-        while (!Validation.isValidPassword(password, user)) {
-            OutputManager.showErrMessage("Wrong password!");
-            OutputManager.showMessage("Try again" + TEXT_RED + "Y/N");
-            String ans = InputManager.getLetter(scanner);
+        while (userService.doesPasswordMatches(password, user)) {
+            outputManager.showErrMessage("Wrong password!");
+            outputManager.showMessage("Try again" + TEXT_RED + "Y/N");
+            String ans = inputManager.getLetter();
             if (attempts >= ALLOWED_PASSWORD_ATTEMPTS) {
-                OutputManager.showErrMessage("You have passed the allowed attempts, Going back to menu");
+                outputManager.showErrMessage("You have passed the allowed attempts, Going back to menu");
                 menu();
             }
             if (!ans.equalsIgnoreCase("y"))
                 menu();
 
             attempts++;
-            password = InputManager.getString(scanner);
+            password = inputManager.getString();
+        }
+        startGame(user);
+    }
+
+    private void logIn() {
+        outputManager.showMessage("Please provide your nickName");
+        String nickName = inputManager.getWordString();
+
+        if (!userService.doesUserExist(nickName)) {
+            outputManager.showErrMessage("wrong nickName, there doesn't exist a user with that nickname");
+            outputManager.showMessage("""
+                    1. Try again
+                    2. SingUp
+                    """);
+            int ans = inputManager.getInt();
+            switch (ans) {
+                case 1 -> logIn();
+                case 2 -> singUp();
+            }
+        }
+
+        // TODO question should i use the DAO or a service object to get the user
+        User user = userDataAccess.getUserByNickName(nickName).orElseThrow(); // we know for sure that user exist
+        outputManager.showMessage("Please type you password:");
+        String password = inputManager.getString();
+        int attempts = 0;
+        while (!userService.doesPasswordMatches(password, user)) {
+            outputManager.showErrMessage("Wrong password!");
+            outputManager.showMessage("Try again" + TEXT_RED + "Y/N");
+            String ans = inputManager.getLetter();
+
+            if(!userService.hasLeftPasswordAttemps()){
+                outputManager.showErrMessage("You have passed the allowed attempts, Going back to menu");
+                menu();
+                return;
+            }
+            if (!ans.equalsIgnoreCase("y"))
+                menu();
+
+            attempts++;
+            password = inputManager.getString();
         }
         startGame(user);
     }
 
     private void singUp() {
-        OutputManager.showMessage("Please provide a nickName");
-        String nickName = InputManager.getWordString(scanner);
-        while (userExist(users, nickName)) {
-            OutputManager.showErrMessage("This nickname is taken. Please chose other one or: " + TEXT_BLUE + "0. to go back");
-            nickName = InputManager.getWordString(scanner);
-            if (nickName.equals("0")){
+        outputManager.showMessage("Please provide a nickName");
+        String nickName = inputManager.getWordString();
+        while (userService.doesUserExist(nickName)) {
+            outputManager.showErrMessage("This nickname is taken. Please chose other one or: " + TEXT_BLUE + "0. to go back");
+            nickName = inputManager.getWordString();
+            if (nickName.equals("0")) {
                 menu();
                 return;
             }
         }
-        OutputManager.showMessage("Please provide a password");
-        String password = InputManager.setPassword(scanner);
-        User user = new User(nickName, password);
+        outputManager.showMessage("Please provide a password");
+        String password = inputManager.getPassword();
+        User user = userService.createUser(nickName, password);
         users.add(user);
 
         startGame(user);
     }
 
-    private boolean userExist(List<User> users, String nickname) {
-        return users.stream().anyMatch(u -> u.getNickName().equals(nickname));
-    }
 
     public void startGame(User user) {
+
         Map<String, String> words = LoadWords.loadData(Path.of("Hangman/src/main/resources/HangmanWords.txt"));
         Set<Character> usedLetters = new HashSet<>();
-        OutputManager.hr();
-        OutputManager.showMessage("\t\t\t" + user.getNickName() +" Welcome to Hang Man game!");
-        String givenWord = hangmanBoot.getRandomWord(words);
+        outputManager.hr();
+        outputManager.showMessage("\t\t\t" + user.getNickName() + " Welcome to Hang Man game!");
+        String givenWord = getRandomWord(words);
 //        givenWord = words.keySet().toArray(String[]::new)[1];
         String definition = words.get(givenWord);
 
@@ -137,46 +199,46 @@ public class HangmanBoot {
         inputtedWord.append(givenWord.replaceAll("\\w", "-"));
 
         while (gameState == GameState.IN_PROGRESS) {
-            OutputManager.hr();
-            OutputManager.showMessage("Please guess a letter: " + TEXT_BLUE +"0. back to menu");
-            OutputManager.showMessage(TEXT_BLUE + "Hint: "
+            outputManager.hr();
+            outputManager.showMessage("Please guess a letter: " + TEXT_BLUE + "0. back to menu");
+            outputManager.showMessage(TEXT_BLUE + "Hint: "
                     + TEXT_GREEN + definition);
-            OutputManager.showMessage(inputtedWord + "", TEXT_BLUE);
+            outputManager.showMessage(inputtedWord + "", TEXT_BLUE);
 
-            char letter = InputManager.getLetter(scanner).toLowerCase().charAt(0);
+            char letter = inputManager.getLetter().toLowerCase().charAt(0);
             if (letter == '0') {
                 menu();
                 return;
             }
             if (isUsedLetter(usedLetters, letter)) {
-                OutputManager.showMessage("You already have used that letter", TEXT_BLUE);
+                outputManager.showMessage("You already have used that letter", TEXT_BLUE);
 
             } else if (replaceLetters(givenWord, inputtedWord, letter)) {
                 user.incrementScore(1);
                 boolean won = hasWon(givenWord, inputtedWord);
                 if (won) {
                     gameState = GameState.WON;
-                    OutputManager.winMessage();
+                    outputManager.winMessage();
                     break;
                 }
             } else {
-                OutputManager.showErrMessage("The given letter isn't in the word");
+                outputManager.showErrMessage("The given letter isn't in the word");
                 if (hasLose()) {
                     gameState = GameState.LOSE;
-                    OutputManager.loseMessage();
+                    outputManager.loseMessage();
                     break;
                 }
-                OutputManager.showMessage("You have " +TEXT_RED+ (allowedMistake - MISTAKE) +TEXT_RESET+ " chances");
+                outputManager.showMessage("You have " + TEXT_RED + (allowedMistake - mistake) + TEXT_RESET + " chances");
 
             }
-            OutputManager.showMessage("used letters" + usedLetters);
+            outputManager.showMessage("used letters" + usedLetters);
 
             usedLetters.add(letter);
 
         }
-        OutputManager.showMessage("Total score: " + TEXT_BLUE + user.getTotalScore());
-        OutputManager.showMessage("Score: " + TEXT_BLUE + user.getScore());
-        OutputManager.showMessage("Mistakes: " + TEXT_RED + MISTAKE);
+        outputManager.showMessage("Total score: " + TEXT_BLUE + user.getTotalScore());
+        outputManager.showMessage("Score: " + TEXT_BLUE + user.getScore());
+        outputManager.showMessage("Mistakes: " + TEXT_RED + mistake);
         gameEnded();
     }
 
@@ -186,13 +248,13 @@ public class HangmanBoot {
 
 
     private void gameEnded() {
-        OutputManager.showMessage(TEXT_BLUE + "Do you want to play an other game?"
+        outputManager.showMessage(TEXT_BLUE + "Do you want to play an other game?"
                 + TEXT_RED + " Y/N");
-        String ans = InputManager.getLetter(scanner);
+        String ans = inputManager.getLetter();
         if (ans.equals("y"))
             resetGame();
-        else if(!ans.equals("n")){
-            OutputManager.showErrMessage("wrong answer"  + TEXT_RED + " Y/N");
+        else if (!ans.equals("n")) {
+            outputManager.showErrMessage("wrong answer" + TEXT_RED + " Y/N");
         } else {
             UserData.saveUsers(users);
         }
@@ -200,13 +262,13 @@ public class HangmanBoot {
 
     private void resetGame() {
         gameState = GameState.IN_PROGRESS;
-        MISTAKE = 0;
-        startGame(User.currentUser);
-        User.currentUser.setScore(0);
+        mistake = 0;
+        startGame(User.getCurrentUser());
+        User.getCurrentUser().setScore(0);
     }
 
     private boolean hasLose() {
-        return ++MISTAKE >= allowedMistake;
+        return ++mistake >= allowedMistake;
     }
 
     /**

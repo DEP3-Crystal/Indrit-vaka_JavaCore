@@ -1,7 +1,7 @@
 package com.crystal.hangman.model;
 public class User {
     private String nickName;
-    public static User currentUser;
+    private static User currentUser;
     private int totalScore;
     private int score = 0;
     private String password;
@@ -11,6 +11,9 @@ public class User {
         this.totalScore = 0;
         currentUser = this;
         setPassword(password);
+    }
+    public static User getCurrentUser(){
+        return currentUser;
     }
     public String getPassword() {
         return password;

@@ -1,4 +1,4 @@
-package com.crystal.hangman.dao;
+package com.crystal.hangman.dao.user;
 
 import com.crystal.hangman.model.User;
 

@@ -9,11 +9,12 @@ import java.util.stream.Stream;
 
 public class LoadWords {
     public static Map<String, String> loadData(Path path) {
-        Map<String, String> result = null;
+        Map<String, String> result;
         try (Stream<String> lines = Files.lines(path)) {
             result = lines.collect(Collectors.toMap(v -> v.split(";")[0], v2 -> v2.split(";")[1]));
         } catch (IOException e) {
             e.printStackTrace();
+            result = null;
         }
         return result;
     }

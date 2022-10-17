@@ -6,10 +6,14 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class GameProperties {
+    private GameProperties(){
+
+    }
     public static int getAllowedMistakes() throws IOException {
-        InputStream inStream = new FileInputStream("src/main/resources/application.properties");
-        var properties = new Properties();
-        properties.load(inStream);
-        return Integer.parseInt(properties.getProperty("AllowedMistakes"));
+        try (InputStream inStream = new FileInputStream("src/main/resources/application.properties")) {
+            var properties = new Properties();
+            properties.load(inStream);
+            return Integer.parseInt(properties.getProperty("AllowedMistakes"));
+        }
     }
 }
