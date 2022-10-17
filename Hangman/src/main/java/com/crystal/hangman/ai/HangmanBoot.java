@@ -150,8 +150,9 @@ public class HangmanBoot {
             outputManager.showErrMessage("Wrong password!");
             outputManager.showMessage("Try again" + TEXT_RED + "Y/N");
             String ans = inputManager.getLetter();
-
-            if(!userService.hasLeftPasswordAttemps()){
+    //TODO implement !userService.hasLeftPasswordAttempts()
+            //if(!userService.hasLeftPasswordAttempts()){
+            if(attempts >=attempts){
                 outputManager.showErrMessage("You have passed the allowed attempts, Going back to menu");
                 menu();
                 return;

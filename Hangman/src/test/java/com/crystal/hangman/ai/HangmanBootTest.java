@@ -1,5 +1,7 @@
 package com.crystal.hangman.ai;
 
+import com.crystal.hangman.dao.user.UserDataAccess;
+import com.crystal.hangman.dao.user.UserDataAccessFromMemory;
 import com.crystal.hangman.io.InputManager;
 import com.crystal.hangman.io.OutputManager;
 import com.crystal.hangman.service.UserService;
@@ -12,6 +14,7 @@ class HangmanBootTest {
 
     @Test
     void getRandomWord(){
+        UserDataAccess dataAccess = new UserDataAccessFromMemory();
         UserService userService = new UserService(dataAccess);
         OutputManager outputManager = new OutputManager();
         InputManager inputManager = new InputManager(new Scanner(System.in),outputManager);
