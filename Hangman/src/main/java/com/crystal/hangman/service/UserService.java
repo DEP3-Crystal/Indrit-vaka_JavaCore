@@ -5,11 +5,17 @@ import com.crystal.hangman.model.User;
 
 public class UserService {
     private final UserDataAccess userDataAccess;
+    private static UserService instance;
 
-    public UserService(UserDataAccess userDataAccess) {
+    private UserService(UserDataAccess userDataAccess) {
         this.userDataAccess = userDataAccess;
     }
-
+    public static synchronized UserService  getInstance(UserDataAccess userDataAccess){
+        if(instance == null){
+            instance = new UserService(userDataAccess);
+        }
+        return instance;
+    }
     public boolean doesUserExist(String nickname) {
         return userDataAccess.getUserByNickName(nickname).isPresent();
     }

@@ -2,14 +2,23 @@ package com.crystal.hangman.io;
 
 
 public class OutputManager {
-
+    private OutputManager(){
+    }
+    private static OutputManager instance;
+    public static synchronized OutputManager getInstance() {
+        if(instance == null){
+            instance = new OutputManager();
+        }
+        return instance;
+    }
 
     public void showGameRules() {
         hr();
-        System.out.println(" A random word will be chosen,\n" +
-                "                You have to guess right word by suggesting different letters.\n" +
-                "                We will give you hints for each word.\n" +
-                "                For each letter you find you will get 1 score");
+        System.out.println("""
+                A random word will be chosen,
+                    You have to guess right word by suggesting different letters.
+                    We will give you hints for each word.
+                    For each letter you find you will get 1 score""".indent(1));
     }
 
     public void loseMessage() {

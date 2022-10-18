@@ -4,61 +4,62 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class ValidationTest {
-
+    Validation validation = Validation.getInstance();
     @Test
     void isValidNumber() {
         //Number and wordLetters
-        Assertions.assertFalse(Validation.isValidNumber("5a"));
+        Assertions.assertFalse(validation.isValidNumber("5a"));
         //Word and nonWord letters
-        Assertions.assertFalse(Validation.isValidNumber("asc."));
+        Assertions.assertFalse(validation.isValidNumber("asc."));
         // Ending with number
-        Assertions.assertFalse(Validation.isValidNumber("a2"));
+        Assertions.assertFalse(validation.isValidNumber("a2"));
         //Number in the middle
-        Assertions.assertFalse(Validation.isValidNumber(".a5sc"));
+        Assertions.assertFalse(validation.isValidNumber(".a5sc"));
         //Valid number
-        Assertions.assertTrue(Validation.isValidNumber("0152"));
+        Assertions.assertTrue(validation.isValidNumber("0152"));
         //Negative numbers
-        Assertions.assertTrue(Validation.isValidNumber("-224"));
+        Assertions.assertTrue(validation.isValidNumber("-224"));
     }
 
     @Test
     void isValidLetter() {
         //not numbers
-        Assertions.assertTrue(Validation.isValidLetter("a"));
+        Assertions.assertTrue(validation.isValidLetter("a"));
         //length more than one
-        Assertions.assertFalse(Validation.isValidLetter("1a"));
+        Assertions.assertFalse(validation.isValidLetter("1a"));
         // non Word letters
-        Assertions.assertFalse(Validation.isValidLetter("."));
-
+        Assertions.assertFalse(validation.isValidLetter("."));
+        // number
+        Assertions.assertTrue(validation.isValidLetter("1"));
     }
 
     @Test
     void isValidNickName() {
         //containing numbers
-        Assertions.assertTrue(Validation.isValidNickName("1a"));
+        Assertions.assertTrue(validation.isValidNickName("1a"));
         //word and non word letters
-        Assertions.assertFalse(Validation.isValidNickName("a."));
+        Assertions.assertFalse(validation.isValidNickName("a."));
         //Starting with non word letter
-        Assertions.assertFalse(Validation.isValidNickName("?ad"));
+        Assertions.assertFalse(validation.isValidNickName("?ad"));
         // Only word letters
-        Assertions.assertTrue(Validation.isValidNickName("aaxaz"));
+        Assertions.assertTrue(validation.isValidNickName("aaxaz"));
 
     }
 
     @Test
     void isValidPassword() {
         // length less than 8 letters
-        Assertions.assertFalse(Validation.isValidPassword("Te12.!"));
+        Assertions.assertFalse(validation.isValidPassword("Te12.!"));
         // Only Letters all same case
-        Assertions.assertFalse(Validation.isValidPassword("ACASCECASCS"));
+        Assertions.assertFalse(validation.isValidPassword("ACASCECASCS"));
 
         // Only letters different case
-        Assertions.assertFalse(Validation.isValidPassword("AcascAASC"));
+        Assertions.assertFalse(validation.isValidPassword("AcascAASC"));
 
         // letters and numbers
-        Assertions.assertFalse(Validation.isValidPassword("Anmmes1224"));
+        Assertions.assertFalse(validation.isValidPassword("Anmmes1224"));
         // letters, numbers, nonWord letters
-        Assertions.assertTrue(Validation.isValidPassword("Test1234."));
+        Assertions.assertTrue(validation.isValidPassword("Test1234."));
     }
 
 }

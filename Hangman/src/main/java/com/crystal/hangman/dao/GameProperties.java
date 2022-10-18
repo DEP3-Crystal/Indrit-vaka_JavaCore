@@ -9,11 +9,13 @@ public class GameProperties {
     private GameProperties(){
 
     }
-    public static int getAllowedMistakes() throws IOException {
+    public static int getAllowedMistakes()  {
         try (InputStream inStream = new FileInputStream("src/main/resources/application.properties")) {
             var properties = new Properties();
             properties.load(inStream);
             return Integer.parseInt(properties.getProperty("AllowedMistakes"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

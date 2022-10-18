@@ -16,7 +16,16 @@ public class UserDataAccessFromMemory implements UserDataAccess {
     @Override
     public Optional<User> getUserByNickName(String nickName) {
         // TODO Question
-        return users.entrySet().stream().dropWhile(entry-> !entry.getKey().equals(nickName)).findFirst().map(Map.Entry::getValue);
-        //return users.entrySet().stream().filter(entry-> entry.getKey().equals(nickName)).findFirst().map(Map.Entry::getValue);
+        return users.entrySet().stream().dropWhile(entry-> !entry.getKey().equals(nickName))
+                .findFirst()
+                .map(Map.Entry::getValue);
+//        return users.entrySet().stream().filter(entry-> entry.getKey().equals(nickName))
+//                .findFirst()
+//                .map(Map.Entry::getValue);
+    }
+
+    @Override
+    public Map<String, User> getUsers() {
+        return null;
     }
 }
