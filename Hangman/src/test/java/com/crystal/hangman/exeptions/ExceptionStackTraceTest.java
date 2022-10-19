@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
- class ExceptionStackTraceTest {
+class ExceptionStackTraceTest {
     @Test
     void testStackTrace() {
         try {

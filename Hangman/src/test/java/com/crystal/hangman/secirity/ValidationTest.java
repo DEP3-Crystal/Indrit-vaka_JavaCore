@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 class ValidationTest {
     Validation validation = Validation.getInstance();
+
     @Test
     void isValidNumber() {
         //Number and wordLetters

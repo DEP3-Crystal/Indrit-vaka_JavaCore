@@ -18,6 +18,7 @@ public class Menu {
     private final InputManager inputManager;
     private final OutputManager outputManager;
     private final GameService gameService;
+    private final GameData gameData = new GameData();
 
 
     public Menu(UserService userService, InputManager inputManager, OutputManager outputManager, GameService gameService) {
@@ -145,19 +146,20 @@ public class Menu {
     }
 
 
-
-
-
     public void startTheGame(User user) {
+        startTheGame(user, true);
+    }
 
-        GameData gameData = new GameData();
+    public void startTheGame(User user, boolean firstRun) {
 
-        outputManager.hr();
-        outputManager.showMessage("\t\t\t" + user.getNickName() + " Welcome to Hang Man game!");
+        if (firstRun) {
+            outputManager.hr();
+            outputManager.showMessage("\t\t\t" + user.getNickName() + " Welcome to Hang Man game!");
+        }
 
         playGame(gameData);
         showGameResults(user, gameData);
-        gameEnded(gameData);
+        gameEnded(user, gameData);
     }
 
     private void playGame(GameData gameData) {
@@ -170,10 +172,8 @@ public class Menu {
 
             char answer = inputManager.getLetter().toLowerCase().charAt(0);
             if (answer == '0') {
-               menu();
-            }
-
-            if (givenWord.contains(answer + "")) {
+                menu();
+            } else if (givenWord.contains(answer + "")) {
                 dashedWord = gameService.replaceLetters(givenWord, dashedWord, answer);
                 gameData.incrementScore();
 
@@ -181,10 +181,6 @@ public class Menu {
                     outputManager.winMessage();
                     gameData.won();
                 }
-
-            } if (gameService.isUsedLetter(gameData, answer)) {
-                outputManager.showMessage("You already have used that letter", TEXT_BLUE);
-                outputManager.showMessage("used letters" + gameData.getUsedLetters());
 
             } else {
                 outputManager.showErrMessage("The given letter isn't in the word");
@@ -196,7 +192,12 @@ public class Menu {
                     outputManager.showMessage("You have " + TEXT_RED + gameData.getLeftChances() + TEXT_RESET + " chances");
                 }
             }
-            gameService.addUsedLetter(gameData,answer);
+            if (gameService.isUsedLetter(gameData, answer)) {
+                outputManager.showMessage("You already have used that letter", TEXT_BLUE);
+                outputManager.showMessage("used letters" + gameData.getUsedLetters());
+
+            }
+            gameService.addUsedLetter(gameData, answer);
         }
     }
 
@@ -216,12 +217,12 @@ public class Menu {
     }
 
 
-    private void gameEnded(GameData gameData) {
+    private void gameEnded(User user, GameData gameData) {
         outputManager.showMessage(TEXT_BLUE + "Do you want to play an other game?"
                 + TEXT_RED + " Y/N");
         String ans = inputManager.getLetter();
         if (ans.equalsIgnoreCase("y"))
-            resetTheGame(gameData);
+            resetTheGame(user, gameData);
         else if (!ans.equals("n")) {
             outputManager.showErrMessage("wrong answer" + TEXT_RED + " Y/N");
         } else {
@@ -229,9 +230,9 @@ public class Menu {
         }
     }
 
-    private void resetTheGame(GameData gameData) {
+    private void resetTheGame(User user, GameData gameData) {
         gameData.resetData();
-        playGame(gameData);
+        startTheGame(user);
     }
 
 }

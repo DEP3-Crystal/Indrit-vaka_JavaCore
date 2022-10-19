@@ -42,7 +42,8 @@ public class GameService {
     private void loadData() {
         words = wordDataAccess.getWords();
     }
-   public StringBuilder getDashedWord(String givenWord) {
+
+    public StringBuilder getDashedWord(String givenWord) {
         StringBuilder inputtedWord = new StringBuilder();
         inputtedWord.append(givenWord.replaceAll("\\w", "-"));
         return inputtedWord;
@@ -85,9 +86,10 @@ public class GameService {
         return gameData.getUsedLetters().contains(letter);
     }
 
-    public void addUsedLetter(GameData gameData,char answer) {
+    public void addUsedLetter(GameData gameData, char answer) {
         gameData.getUsedLetters().add(answer);
     }
+
     public void updateUserData(User user, GameData gameData) {
         if (user.getHighScore() < gameData.getScore()) {
             user.setHighScore(gameData.getScore());

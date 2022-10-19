@@ -1,6 +1,5 @@
 package com.crystal.hangman.service;
 
-import com.crystal.hangman.ai.HangmanBoot;
 import com.crystal.hangman.dao.user.UserDataAccess;
 import com.crystal.hangman.dao.user.UserDataAccessFromProperties;
 import com.crystal.hangman.dao.word.WordDataAccess;
@@ -13,7 +12,6 @@ class GameServiceTest {
     private final UserDataAccess userDataAccess = new UserDataAccessFromProperties();
     private final WordDataAccess wordDataAccess = new WordDataAccessFromFile();
     private final GameService gameService = new GameService(wordDataAccess, userDataAccess);
-    private final HangmanBoot hangmanBoot = new HangmanBoot(gameService);
     String word = "brick";
 
     @Test
@@ -63,7 +61,7 @@ class GameServiceTest {
         //By default, there are no used letters at all
         Assertions.assertFalse(gameService.isUsedLetter(gameData, 'a'));
         char letter = 'b';
-        gameService.addUsedLetter(gameData,letter);
-        Assertions.assertTrue(gameService.isUsedLetter(gameData,letter));
+        gameService.addUsedLetter(gameData, letter);
+        Assertions.assertTrue(gameService.isUsedLetter(gameData, letter));
     }
 }

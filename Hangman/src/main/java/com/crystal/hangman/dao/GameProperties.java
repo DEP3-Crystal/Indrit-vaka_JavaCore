@@ -1,5 +1,6 @@
 package com.crystal.hangman.dao;
 
+
 import com.crystal.path.ResourcesPath;
 
 import java.io.FileInputStream;

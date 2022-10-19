@@ -33,6 +33,7 @@ public class GameData {
 
     public void resetData() {
         gameState = GameState.IN_PROGRESS;
+        usedLetters.clear();
         score = 0;
         mistakes = 0;
     }
