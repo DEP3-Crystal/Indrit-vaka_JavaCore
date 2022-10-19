@@ -17,9 +17,11 @@ public class InputManager {
             instance = new InputManager();
         return instance;
     }
-    private InputManager(){
+
+    private InputManager() {
 
     }
+
     /**
      * @return a single letter no special characters allowed
      */
@@ -39,6 +41,7 @@ public class InputManager {
 
     /**
      * Gets input from user and makes sure that's a number
+     *
      * @return an int
      */
     public int getInt() {

@@ -1,15 +1,14 @@
 package com.crystal.hangman;
 
-import com.crystal.hangman.ai.HangmanBoot;
-import com.crystal.hangman.dao.user.UserDataAccess;
-import com.crystal.hangman.dao.word.WordDataAccess;
 import com.crystal.hangman.io.InputManager;
 import com.crystal.hangman.io.OutputManager;
+import com.crystal.hangman.model.GameData;
+import com.crystal.hangman.model.GameState;
 import com.crystal.hangman.model.User;
+import com.crystal.hangman.service.GameService;
 import com.crystal.hangman.service.UserService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import static com.crystal.hangman.io.ConsoleColors.*;
 
@@ -18,22 +17,19 @@ public class Menu {
     private final UserService userService;
     private final InputManager inputManager;
     private final OutputManager outputManager;
-    private final UserDataAccess userDataAccess;
-
-   private final HangmanBoot hangmanBoot;
+    private final GameService gameService;
 
 
-
-    public Menu(UserService userService, InputManager inputManager, OutputManager outputManager, UserDataAccess userDataAccess, WordDataAccess wordDataAccess) {
+    public Menu(UserService userService, InputManager inputManager, OutputManager outputManager, GameService gameService) {
         this.userService = userService;
         this.inputManager = inputManager;
         this.outputManager = outputManager;
-        this.userDataAccess = userDataAccess;
-        hangmanBoot = new HangmanBoot(wordDataAccess, userDataAccess);
+        this.gameService = gameService;
     }
 
 
     public void menu() {
+
         int inputtedNumber = showMenu();
         switch (inputtedNumber) {
             case 1 -> singUp();
@@ -65,15 +61,19 @@ public class Menu {
 
     private void showGameStats() {
         outputManager.showMessage("NickName: \t\tTotalScore", TEXT_BLUE);
-        users.forEach(user -> outputManager.showMessage(TEXT_GREEN + user.getNickName() + "\t\t\t" + TEXT_GREEN + user.getHighScore()));
+        Map<String, User> users = userService.getAllUsers();
+        printUsers(users);
         outputManager.hr();
         outputManager.showMessage("any key to go back to Menu", TEXT_BLUE);
         inputManager.getString();
         menu();
     }
 
+    private void printUsers(Map<String, User> users) {
+        users.values().forEach(user -> outputManager.showMessage(TEXT_GREEN + user.getNickName() + "\t\t\t" + TEXT_GREEN + user.getHighScore()));
+    }
+
     private void exitGame() {
-        UserData.saveUsers(users);
         System.exit(0);
     }
 
@@ -102,9 +102,9 @@ public class Menu {
             }
         }
 
-        User user = userDataAccess.getUserByNickName(nickName).orElseThrow(); // we know for sure that user exist
+        User user = userService.getUserByNickName(nickName).orElseThrow(); // we know for sure that user exist
         outputManager.showMessage("Please type you password:");
-        if(isValidPassword(user)) {
+        if (isValidPassword(user)) {
             startTheGame(user);
         }
     }
@@ -139,14 +139,99 @@ public class Menu {
         outputManager.showMessage("Please provide a password");
         String password = inputManager.getPassword();
         User user = userService.createUser(nickName, password);
-        users.add(user);
-
+        userService.addUser(user);
+        userService.saveUserData(user);
         startTheGame(user);
     }
 
-    private void startTheGame(User user){
-        hangmanBoot.startTheGame(user);
 
+
+
+
+    public void startTheGame(User user) {
+
+        GameData gameData = new GameData();
+
+        outputManager.hr();
+        outputManager.showMessage("\t\t\t" + user.getNickName() + " Welcome to Hang Man game!");
+
+        playGame(gameData);
+        showGameResults(user, gameData);
+        gameEnded(gameData);
+    }
+
+    private void playGame(GameData gameData) {
+        String givenWord = gameService.getNextLevel();
+        String definition = gameService.getDefinition(givenWord);
+        StringBuilder dashedWord = gameService.getDashedWord(givenWord);
+
+        while (gameData.getGameState() == GameState.IN_PROGRESS) {
+            printWord(definition, dashedWord);
+
+            char answer = inputManager.getLetter().toLowerCase().charAt(0);
+            if (answer == '0') {
+               menu();
+            }
+
+            if (givenWord.contains(answer + "")) {
+                dashedWord = gameService.replaceLetters(givenWord, dashedWord, answer);
+                gameData.incrementScore();
+
+                if (gameService.hasWon(givenWord, dashedWord)) {
+                    outputManager.winMessage();
+                    gameData.won();
+                }
+
+            } if (gameService.isUsedLetter(gameData, answer)) {
+                outputManager.showMessage("You already have used that letter", TEXT_BLUE);
+                outputManager.showMessage("used letters" + gameData.getUsedLetters());
+
+            } else {
+                outputManager.showErrMessage("The given letter isn't in the word");
+                gameData.wrongAnswer();
+                if (gameService.hasLose(gameData)) {
+                    gameData.lose();
+                    outputManager.loseMessage();
+                } else {
+                    outputManager.showMessage("You have " + TEXT_RED + gameData.getLeftChances() + TEXT_RESET + " chances");
+                }
+            }
+            gameService.addUsedLetter(gameData,answer);
+        }
+    }
+
+    private void printWord(String definition, StringBuilder inputtedWord) {
+        outputManager.hr();
+        outputManager.showMessage("Please guess a letter: " + TEXT_BLUE + "0. back to menu");
+        outputManager.showMessage(TEXT_BLUE + "Hint: " + TEXT_GREEN + definition);
+
+        outputManager.showMessage(inputtedWord + "", TEXT_BLUE);
+    }
+
+    private void showGameResults(User user, GameData gameData) {
+        gameService.updateUserData(user, gameData);
+        outputManager.showMessage("High score: " + TEXT_BLUE + user.getHighScore());
+        outputManager.showMessage("Score: " + TEXT_BLUE + gameData.getScore());
+        outputManager.showMessage("Mistakes: " + TEXT_RED + gameData.getMistakes());
+    }
+
+
+    private void gameEnded(GameData gameData) {
+        outputManager.showMessage(TEXT_BLUE + "Do you want to play an other game?"
+                + TEXT_RED + " Y/N");
+        String ans = inputManager.getLetter();
+        if (ans.equalsIgnoreCase("y"))
+            resetTheGame(gameData);
+        else if (!ans.equals("n")) {
+            outputManager.showErrMessage("wrong answer" + TEXT_RED + " Y/N");
+        } else {
+            outputManager.showMessage(TEXT_BLUE + "See you! :)");
+        }
+    }
+
+    private void resetTheGame(GameData gameData) {
+        gameData.resetData();
+        playGame(gameData);
     }
 
 }

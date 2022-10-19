@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserDataAccess {
-    void addUser(User user);
+    void saveUser(User user);
+
     Optional<User> getUserByNickName(String nickName);
+
     Map<String, User> getUsers();
 }

@@ -1,27 +1,31 @@
 package com.crystal.hangman.service;
 
+import com.crystal.hangman.dao.user.UserDataAccess;
 import com.crystal.hangman.dao.word.WordDataAccess;
 import com.crystal.hangman.model.GameData;
+import com.crystal.hangman.model.User;
 
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 public class GameService {
     private final WordDataAccess wordDataAccess;
     private final Random random = new Random();
     Map<String, String> words;
+    private final UserDataAccess userDataAccess;
 
-    public GameService(WordDataAccess wordDataAccess) {
+
+    public GameService(WordDataAccess wordDataAccess, UserDataAccess userDataAccess) {
         this.wordDataAccess = wordDataAccess;
+        this.userDataAccess = userDataAccess;
     }
 
     /**
      * @return chosen word
      */
     public String getNextLevel() {
-        if(words == null){
+        if (words == null) {
             loadData();
         }
         String[] wordKeySet = words.keySet().toArray(String[]::new);
@@ -29,20 +33,24 @@ public class GameService {
     }
 
     public String getDefinition(String word) {
-        if(words == null){
+        if (words == null) {
             loadData();
         }
         return words.get(word);
     }
+
     private void loadData() {
         words = wordDataAccess.getWords();
     }
-
-
+   public StringBuilder getDashedWord(String givenWord) {
+        StringBuilder inputtedWord = new StringBuilder();
+        inputtedWord.append(givenWord.replaceAll("\\w", "-"));
+        return inputtedWord;
+    }
 
     /**
      * @param wordToGuess word to be guessed by user
-     * @param guessedWord        the word that user has guessed
+     * @param guessedWord the word that user has guessed
      * @param letter      the given letter by user
      * @return true if letter exist in given word
      */
@@ -73,9 +81,17 @@ public class GameService {
         return gameData.getMistakes() >= gameData.getAllowedMistakes();
     }
 
-    public boolean isUsedLetter(Set<Character> usedLetters, char letter) {
-        return usedLetters.contains(letter);
+    public boolean isUsedLetter(GameData gameData, char letter) {
+        return gameData.getUsedLetters().contains(letter);
     }
 
-
+    public void addUsedLetter(GameData gameData,char answer) {
+        gameData.getUsedLetters().add(answer);
+    }
+    public void updateUserData(User user, GameData gameData) {
+        if (user.getHighScore() < gameData.getScore()) {
+            user.setHighScore(gameData.getScore());
+            userDataAccess.saveUser(user);
+        }
+    }
 }

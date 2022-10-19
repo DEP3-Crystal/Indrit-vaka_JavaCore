@@ -2,11 +2,13 @@ package com.crystal.hangman.io;
 
 
 public class OutputManager {
-    private OutputManager(){
+    private OutputManager() {
     }
+
     private static OutputManager instance;
+
     public static synchronized OutputManager getInstance() {
-        if(instance == null){
+        if (instance == null) {
             instance = new OutputManager();
         }
         return instance;

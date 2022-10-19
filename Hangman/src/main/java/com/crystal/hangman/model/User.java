@@ -1,10 +1,12 @@
 package com.crystal.hangman.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class User {
     private String nickName;
     private int highScore;
@@ -16,11 +18,13 @@ public class User {
         setPassword(password);
     }
 
+
     /**
-     * @return highScore,password
+     * @return highScore, password
      */
     @Override
     public String toString() {
-        return highScore +"," + password;
+        return highScore + "," + password;
     }
 }
+

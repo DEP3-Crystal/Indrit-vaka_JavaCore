@@ -4,13 +4,15 @@ import java.util.regex.Pattern;
 
 public class Validation {
     private static Validation instance;
-    private Validation(){
+
+    private Validation() {
     }
+
     public static synchronized Validation getInstance() {
-            if(instance == null){
-                instance = new Validation();
-            }
-            return instance;
+        if (instance == null) {
+            instance = new Validation();
+        }
+        return instance;
     }
 
     /**
@@ -26,7 +28,7 @@ public class Validation {
      * @return true if the string is single letter no special characters allowed
      */
     public boolean isValidLetter(String c) {
-        return Pattern.compile("^\\w{1,1}$", Pattern.CASE_INSENSITIVE).matcher(c).find();
+        return Pattern.compile("^\\w{1}$", Pattern.CASE_INSENSITIVE).matcher(c).find();
     }
 
     public boolean isValidNickName(String nickName) {
