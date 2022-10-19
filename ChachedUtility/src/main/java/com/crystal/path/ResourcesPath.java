@@ -1,6 +1,6 @@
 package com.crystal.path;
 
-import com.crystal.os.OperationSystem;
+import com.crystal.os.*;
 
 import java.util.Objects;
 
