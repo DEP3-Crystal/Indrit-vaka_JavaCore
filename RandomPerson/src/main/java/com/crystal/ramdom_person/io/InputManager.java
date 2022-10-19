@@ -3,77 +3,86 @@ package com.crystal.ramdom_person.io;
 import com.crystal.ramdom_person.validator.Validator;
 
 import java.util.Scanner;
+import java.util.function.Predicate;
 
 public class InputManager {
 
-    /**
-     * @param scanner scanner obj
-     * @return string text without any validation
-     */
-    public static String getString(Scanner scanner) {
-        return scanner.nextLine();
+    private static InputManager instance;
+    private final Scanner scanner = new Scanner(System.in);
+    private final OutputManager outputManager = OutputManager.getInstance();
+    private final Validation validation = Validation.getInstance();
+
+    public static synchronized InputManager getInstance() {
+        if (instance == null)
+            instance = new InputManager();
+        return instance;
+    }
+
+    private InputManager() {
+
     }
 
     /**
-     * @param scanner scanner obj
      * @return a single letter no special characters allowed
      */
-    public static String getLetter(Scanner scanner) {
-        String input;
-        boolean valid;
-        do {
-            input = scanner.nextLine();
-            valid = Validator.isValidLetter(input);
-            if (input.length() > 1) {
-                OutputManager.showErrMessage("you should give only one letter");
-            }
-            if (!valid) {
-                OutputManager.showErrMessage("please give a valid letter [A-Z] or [a-z]");
-            }
-
-        } while (!valid || input.length() > 1);
-        return input.toLowerCase();
+    public String getLetter() {
+        return validAnswer(validation::isValidLetter, "please give only one letter and letter should be [A-z]");
     }
 
     /**
      * This method returns a string without special characters, its may be used for nickName
      *
-     * @param scanner scanner obj
      * @return string without any special character
      */
-    public static String getWordLettersOnly(Scanner scanner) {
-        String input;
-        boolean valid;
-        do {
-            input = scanner.nextLine();
-            valid = Validator.containsOnlyLetters(input);
-
-            if (!valid) {
-                OutputManager.showErrMessage("your name shouldn't contain non words character ($#/\\...)");
-            }
-        } while (!valid);
-        return input;
+    public String getWordString() {
+        return validAnswer(validation::isValidNickName, "your name shouldn't contain non words character ($#?/\\...)");
     }
 
     /**
      * Gets input from user and makes sure that's a number
      *
-     * @param scanner scanner obj
      * @return an int
      */
-    public static int getInt(Scanner scanner) {
+    public int getInt() {
+
+        return Integer.parseInt(validAnswer(validation::isValidNumber, "Please give a valid number"));
+    }
+
+
+    /**
+     * Validates and returns password as string
+     *
+     * @return the validated password
+     */
+    public String getPassword() {
+
+        return validAnswer(validation::isValidPassword, """
+                You password should contain:
+                   At least one uppercase English letter
+                   At least one lowercase English letter
+                   At least one digit
+                   At least 8 digits
+                   and At least one special character""");
+    }
+
+    /**
+     * @return a string without making any validations
+     */
+    public String getString() {
+        return scanner.nextLine();
+    }
+
+
+    private String validAnswer(Predicate<String> validator, String message) {
         String input;
-        int number = -50;
         do {
             input = scanner.nextLine();
 
-            if (!Validator.isValidNumber(input))
-                OutputManager.showErrMessage("Please give a valid number");
-            else {
-                number = Integer.parseInt(input);
+            if (!validator.test(input)) {
+                outputManager.showErrMessage(message);
             }
-        } while (!Validator.isValidNumber(input));
-        return number;
-    }
 
+        } while (!validator.test(input));
+        return input;
+    }
 }

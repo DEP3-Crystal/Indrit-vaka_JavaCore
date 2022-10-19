@@ -1,0 +1,2 @@
+Message,Stack Trace
+Invalid entry for user: Indrit entry: 123456Abb. is not a valid number,[Ljava.lang.StackTraceElement;@30946e09
