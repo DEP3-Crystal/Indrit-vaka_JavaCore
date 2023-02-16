@@ -1,6 +1,6 @@
-package com.crystal.hangman.io;
+package com.crystal.ramdom_person.io;
 
-import com.crystal.hangman.secirity.Validation;
+import com.crystal.ramdom_person.validator.Validator;
 
 import java.util.Scanner;
 import java.util.function.Predicate;
@@ -37,7 +37,6 @@ public class InputManager {
     public String getWordString() {
         return validAnswer(validation::isValidNickName, "your name shouldn't contain non words character ($#?/\\...)");
     }
-
 
     /**
      * Gets input from user and makes sure that's a number
